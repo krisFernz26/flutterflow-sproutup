@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "639368599299",
+    "project_id": "sproutup-f1a87",
+    "storage_bucket": "sproutup-f1a87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639368599299:android:4fe6d5c069a19db05c3b36",
+        "android_client_info": {
+          "package_name": "com.kfernz.sproutup"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "639368599299-kma9271rofplqhdirgjpqsvau94ssi2u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBj1z9P3Ljb1bi5C14e80TrEqUQ63f5a7A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "639368599299-kma9271rofplqhdirgjpqsvau94ssi2u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

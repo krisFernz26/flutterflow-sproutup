@@ -1,3 +1,5 @@
+import 'package:sprout_up/create_startup_page/create_startup_page_widget.dart';
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../backend/firebase_storage/storage.dart';
@@ -49,9 +51,61 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
         List<StartupsRecord> sproutPageStartupsRecordList = snapshot.data;
         // Customize what your widget looks like with no query results.
         if (snapshot.data.isEmpty) {
-          // return Container();
-          // For now, we'll just include some dummy data.
-          sproutPageStartupsRecordList = createDummyStartupsRecord(count: 1);
+          return Scaffold(
+          key: scaffoldKey,
+          appBar: AppBar(
+            centerTitle: true,
+            elevation: 0,
+            backgroundColor: FlutterFlowTheme.primaryColor,
+            automaticallyImplyLeading: false,
+            title: Text(
+              "Sprout",
+              style: FlutterFlowTheme.title1.override(
+                fontFamily: 'Montserrat',
+                color: FlutterFlowTheme.secondaryColor,
+              ),
+            ),
+          ),
+            body: Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: FlutterFlowTheme.primaryColor,
+                ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(50.0),
+                  child: FFButtonWidget(
+                          onPressed: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CreateStartupPageWidget(),
+                              ),
+                            );
+                          },
+                          text: 'Create a Sprout',
+                          options: FFButtonOptions(
+                            elevation: 0,
+                            width: double.infinity,
+                            height: 50,
+                            color: Color(0x00FFFFFF),
+                            textStyle: FlutterFlowTheme.subtitle2.override(
+                              fontFamily: 'Montserrat',
+                              color: FlutterFlowTheme.secondaryColor,
+                            ),
+                            borderSide: BorderSide(
+                              color: FlutterFlowTheme.tertiaryColor,
+                              width: 1,
+                            ),
+                            borderRadius: 1000,
+                          ),
+                        ),
+                ),
+              ),
+            ),
+          );
+          // sproutPageStartupsRecordList = createDummyStartupsRecord(count: 1);
         }
         final sproutPageStartupsRecord = sproutPageStartupsRecordList.first;
         return Scaffold(

@@ -35,25 +35,40 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<UsersRecord>>(
-      stream: queryUsersRecord(
-        queryBuilder: (usersRecord) =>
-            usersRecord.where('uid', isEqualTo: currentUserUid),
-        singleRecord: true,
-      ),
+    return StreamBuilder<UsersRecord>(
+      stream: UsersRecord.getDocument(currentUserReference),
       builder: (context, snapshot) {
-        // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
-        List<UsersRecord> profilePageUsersRecordList = snapshot.data;
-        // Customize what your widget looks like with no query results.
-        if (snapshot.data.isEmpty) {
-          // return Container();
-          // For now, we'll just include some dummy data.
-          profilePageUsersRecordList = createDummyUsersRecord(count: 1);
+
+        if (snapshot.hasError) {
+          return Scaffold(
+            key: scaffoldKey,
+            appBar: AppBar(
+              centerTitle: true,
+              elevation: 0,
+              backgroundColor: FlutterFlowTheme.primaryColor,
+              automaticallyImplyLeading: false,
+              title: Text(
+                "Profile",
+                style: FlutterFlowTheme.title1.override(
+                  fontFamily: 'Montserrat',
+                  color: FlutterFlowTheme.secondaryColor,
+                ),
+              ),
+            ),
+            body: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: FlutterFlowTheme.primaryColor,
+              ),
+            ),
+          );
         }
-        final profilePageUsersRecord = profilePageUsersRecordList.first;
+
+        final profilePageUsersRecord = snapshot.data;
         return Scaffold(
           key: scaffoldKey,
           appBar: AppBar(

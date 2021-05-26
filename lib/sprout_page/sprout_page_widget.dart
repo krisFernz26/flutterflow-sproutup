@@ -44,12 +44,10 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
         singleRecord: true,
       ),
       builder: (context, snapshot) {
-        // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
         List<StartupsRecord> sproutPageStartupsRecordList = snapshot.data;
-        // Customize what your widget looks like with no query results.
         if (snapshot.data.isEmpty) {
           return Scaffold(
           key: scaffoldKey,

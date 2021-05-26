@@ -79,6 +79,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
             centerTitle: true,
             elevation: 0,
           ),
+          backgroundColor: FlutterFlowTheme.primaryColor,
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
               await Navigator.push(

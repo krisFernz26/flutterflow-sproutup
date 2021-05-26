@@ -20,7 +20,7 @@ class _LandingPageWidgetState extends State<LandingPageWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Color(0x00FFFFFF),
+      backgroundColor: FlutterFlowTheme.primaryColor,
       body: SafeArea(
         child: Container(
           width: double.infinity,

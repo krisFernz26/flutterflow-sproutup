@@ -1,6 +1,7 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../backend/firebase_storage/storage.dart';
+import '../edit_startup_page/edit_startup_page_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_video_player.dart';
@@ -68,8 +69,13 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
             ),
             actions: [
               IconButton(
-                onPressed: () {
-                  print('IconButton pressed ...');
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditStartupPageWidget(),
+                    ),
+                  );
                 },
                 icon: Icon(
                   Icons.edit_sharp,
@@ -82,6 +88,7 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
             centerTitle: true,
             elevation: 0,
           ),
+          backgroundColor: FlutterFlowTheme.primaryColor,
           body: SafeArea(
             child: Container(
               width: double.infinity,

@@ -44,6 +44,7 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
         centerTitle: true,
         elevation: 0,
       ),
+      backgroundColor: FlutterFlowTheme.primaryColor,
       body: SafeArea(
         child: Container(
           width: double.infinity,

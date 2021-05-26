@@ -64,6 +64,7 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
         centerTitle: true,
         elevation: 0,
       ),
+      backgroundColor: FlutterFlowTheme.primaryColor,
       body: SafeArea(
         child: Container(
           width: double.infinity,

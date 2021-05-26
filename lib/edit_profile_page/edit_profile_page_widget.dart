@@ -56,6 +56,7 @@ class _EditProfilePageWidgetState extends State<EditProfilePageWidget> {
         centerTitle: true,
         elevation: 0,
       ),
+      backgroundColor: FlutterFlowTheme.primaryColor,
       body: SafeArea(
         child: Container(
           width: double.infinity,

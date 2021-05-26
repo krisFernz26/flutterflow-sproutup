@@ -42,7 +42,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
           return Center(child: CircularProgressIndicator());
         }
 
-        if (snapshot.hasError) {
+        if (snapshot.data == null) {
           return Scaffold(
             key: scaffoldKey,
             appBar: AppBar(

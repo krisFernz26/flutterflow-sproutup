@@ -35,40 +35,25 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<UsersRecord>(
-      stream: UsersRecord.getDocument(currentUserReference),
+    return StreamBuilder<List<UsersRecord>>(
+      stream: queryUsersRecord(
+        queryBuilder: (usersRecord) =>
+            usersRecord.where('uid', isEqualTo: currentUserUid),
+        singleRecord: true,
+      ),
       builder: (context, snapshot) {
+        // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
-
-        if (snapshot.data == null) {
-          return Scaffold(
-            key: scaffoldKey,
-            appBar: AppBar(
-              centerTitle: true,
-              elevation: 0,
-              backgroundColor: FlutterFlowTheme.primaryColor,
-              automaticallyImplyLeading: false,
-              title: Text(
-                "Profile",
-                style: FlutterFlowTheme.title1.override(
-                  fontFamily: 'Montserrat',
-                  color: FlutterFlowTheme.secondaryColor,
-                ),
-              ),
-            ),
-            body: Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                color: FlutterFlowTheme.primaryColor,
-              ),
-            ),
-          );
+        List<UsersRecord> profilePageUsersRecordList = snapshot.data;
+        // Customize what your widget looks like with no query results.
+        if (snapshot.data.isEmpty) {
+          // return Container();
+          // For now, we'll just include some dummy data.
+          profilePageUsersRecordList = createDummyUsersRecord(count: 1);
         }
-
-        final profilePageUsersRecord = snapshot.data;
+        final profilePageUsersRecord = profilePageUsersRecordList.first;
         return Scaffold(
           key: scaffoldKey,
           appBar: AppBar(
@@ -397,18 +382,12 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                   stream: StartupsRecord.getDocument(
                                       profilePageUsersRecord.startup),
                                   builder: (context, snapshot) {
+                                    // Customize what your widget looks like when it's loading.
                                     if (!snapshot.hasData) {
                                       return Center(
                                           child: CircularProgressIndicator());
                                     }
                                     final rowStartupsRecord = snapshot.data;
-                                    if (snapshot.data == null) {
-                                      return Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(10, 0, 0, 10),
-                                        child: Text('No registered Sprout'),
-                                      );
-                                    }
                                     return Padding(
                                       padding:
                                           EdgeInsets.fromLTRB(10, 0, 0, 10),

@@ -36,6 +36,23 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
     textController3 = TextEditingController();
   }
 
+  void uploadPhoto() async {
+    final selectedMedia = await selectMedia();
+    if (selectedMedia != null &&
+        validateFileFormat(selectedMedia.storagePath, context)) {
+      showUploadMessage(context, 'Uploading file...', showLoading: true);
+      final downloadUrl =
+          await uploadData(selectedMedia.storagePath, selectedMedia.bytes);
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      if (downloadUrl != null) {
+        setState(() => uploadedFileUrl = downloadUrl);
+        showUploadMessage(context, 'Success!');
+      } else {
+        showUploadMessage(context, 'Failed to upload media');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,39 +114,26 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                    child: InkWell(
-                      onTap: () async {
-                        final selectedMedia = await selectMedia();
-                        if (selectedMedia != null &&
-                            validateFileFormat(
-                                selectedMedia.storagePath, context)) {
-                          showUploadMessage(context, 'Uploading file...',
-                              showLoading: true);
-                          final downloadUrl = await uploadData(
-                              selectedMedia.storagePath, selectedMedia.bytes);
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          if (downloadUrl != null) {
-                            setState(() => uploadedFileUrl = downloadUrl);
-                            showUploadMessage(context, 'Success!');
-                          } else {
-                            showUploadMessage(
-                                context, 'Failed to upload media');
-                          }
-                        }
-                      },
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: Image.network(
-                          'https://picsum.photos/seed/936/600',
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
+                    child: uploadedFileUrl.isEmpty
+                        ? ElevatedButton.icon(
+                            onPressed: uploadPhoto,
+                            icon: Icon(Icons.add_a_photo),
+                            label: Text('Upload Photo *'))
+                        : InkWell(
+                            onTap: uploadPhoto,
+                            child: Container(
+                              width: 100,
+                              height: 100,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                              ),
+                              child: Image.network(
+                                uploadedFileUrl,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 25, 0, 0),

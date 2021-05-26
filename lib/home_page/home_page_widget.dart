@@ -86,8 +86,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                 child: StreamBuilder<List<StartupsRecord>>(
                   stream: queryStartupsRecord(
                     queryBuilder: (startupsRecord) => startupsRecord
-                        .where('date_registered',
-                            isGreaterThanOrEqualTo: getCurrentTimestamp)
                         .orderBy('date_registered', descending: true),
                   ),
                   builder: (context, snapshot) {

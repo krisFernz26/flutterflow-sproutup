@@ -401,7 +401,6 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                         final dateLastLoggedIn = getCurrentTimestamp;
                         final displayName = textController2.text;
                         final photoUrl = uploadedFileUrl;
-                        final uid = '';
                         final createdTime = getCurrentTimestamp;
 
                         final usersRecordData = createUsersRecordData(
@@ -410,7 +409,6 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                           dateLastLoggedIn: dateLastLoggedIn,
                           displayName: displayName,
                           photoUrl: photoUrl,
-                          uid: uid,
                           createdTime: createdTime,
                         );
 

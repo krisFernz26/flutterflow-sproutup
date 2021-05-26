@@ -1,8 +1,11 @@
 import '../auth/auth_util.dart';
+import '../backend/backend.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
+import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import '../main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -45,167 +48,180 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
             color: Color(0xFF4DB6AC),
           ),
           child: Padding(
-            padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AutoSizeText(
-                  'SproutUp',
-                  style: FlutterFlowTheme.title1.override(
-                    fontFamily: 'Montserrat',
-                    color: Colors.white,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                  child: AutoSizeText(
-                    'Login to your SproutUp account',
-                    textAlign: TextAlign.center,
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.tertiaryColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w200,
+            padding: EdgeInsets.fromLTRB(50, 5, 50, 0),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 40, 0, 0),
+                    child: AutoSizeText(
+                      'SproutUp',
+                      style: FlutterFlowTheme.title1.override(
+                        fontFamily: 'Montserrat',
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
-                  child: TextFormField(
-                    controller: emailTextController,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelText: 'Email',
-                      labelStyle: FlutterFlowTheme.bodyText1.override(
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                    child: AutoSizeText(
+                      'Login to your SproutUp account',
+                      textAlign: TextAlign.center,
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Montserrat',
+                        color: FlutterFlowTheme.tertiaryColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w200,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+                    child: TextFormField(
+                      controller: emailTextController,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        labelText: 'Email',
+                        labelStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                        hintText: 'example@example.com',
+                        hintStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: Color(0xB3FFFFFF),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                      ),
+                      style: FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Montserrat',
                         color: FlutterFlowTheme.secondaryColor,
                       ),
-                      hintText: 'example@example.com',
-                      hintStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: Color(0xB3FFFFFF),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                    ),
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.secondaryColor,
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
-                  child: TextFormField(
-                    controller: passwordTextController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelText: 'Password',
-                      labelStyle: FlutterFlowTheme.bodyText1.override(
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                    child: TextFormField(
+                      controller: passwordTextController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        labelText: 'Password',
+                        labelStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                        hintText: 'Password',
+                        hintStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: Color(0xB3FFFFFF),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                      ),
+                      style: FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Montserrat',
                         color: FlutterFlowTheme.secondaryColor,
                       ),
-                      hintText: 'Password',
-                      hintStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: Color(0xB3FFFFFF),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                    ),
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.secondaryColor,
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: FFButtonWidget(
-                    onPressed: () async {
-                      final user = await signInWithEmail(
-                        context,
-                        emailTextController.text,
-                        passwordTextController.text,
-                      );
-                      if (user == null) {
-                        return;
-                      }
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: FFButtonWidget(
+                      onPressed: () async {
+                        final user = await signInWithEmail(
+                          context,
+                          emailTextController.text,
+                          passwordTextController.text,
+                        );
+                        if (user == null) {
+                          return;
+                        }
 
-                      await Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              NavBarPage(initialPage: 'HomePage'),
+                        final dateLastLoggedIn = getCurrentTimestamp;
+
+                        final usersRecordData = createUsersRecordData(
+                          dateLastLoggedIn: dateLastLoggedIn,
+                        );
+
+                        await currentUserReference.update(usersRecordData);
+                        await Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                NavBarPage(initialPage: 'HomePage'),
+                          ),
+                          (r) => false,
+                        );
+                      },
+                      text: 'Login',
+                      options: FFButtonOptions(
+                        width: double.infinity,
+                        height: 50,
+                        color: FlutterFlowTheme.secondaryColor,
+                        textStyle: FlutterFlowTheme.subtitle2.override(
+                          fontFamily: 'Montserrat',
+                          color: Color(0xFF4DB6AC),
                         ),
-                        (r) => false,
-                      );
-                    },
-                    text: 'Login',
-                    options: FFButtonOptions(
-                      width: double.infinity,
-                      height: 50,
-                      color: FlutterFlowTheme.secondaryColor,
-                      textStyle: FlutterFlowTheme.subtitle2.override(
-                        fontFamily: 'Montserrat',
-                        color: Color(0xFF4DB6AC),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                          width: 1,
+                        ),
+                        borderRadius: 1000,
                       ),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                        width: 1,
-                      ),
-                      borderRadius: 1000,
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
         ),

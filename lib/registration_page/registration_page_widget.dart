@@ -57,392 +57,393 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
           ),
           child: Padding(
             padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AutoSizeText(
-                  'SproutUp',
-                  style: FlutterFlowTheme.title1.override(
-                    fontFamily: 'Montserrat',
-                    color: Colors.white,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                  child: AutoSizeText(
-                    'Register your SproutUp account',
-                    textAlign: TextAlign.center,
-                    style: FlutterFlowTheme.bodyText1.override(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AutoSizeText(
+                    'SproutUp',
+                    style: FlutterFlowTheme.title1.override(
                       fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.tertiaryColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w200,
+                      color: Colors.white,
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                  child: AutoSizeText(
-                    '* Required fields',
-                    textAlign: TextAlign.center,
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.tertiaryColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                    child: AutoSizeText(
+                      'Register your SproutUp account',
+                      textAlign: TextAlign.center,
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Montserrat',
+                        color: FlutterFlowTheme.tertiaryColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w200,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                  child: InkWell(
-                    onTap: () async {
-                      final selectedMedia = await selectMedia();
-                      if (selectedMedia != null &&
-                          validateFileFormat(
-                              selectedMedia.storagePath, context)) {
-                        showUploadMessage(context, 'Uploading file...',
-                            showLoading: true);
-                        final downloadUrl = await uploadData(
-                            selectedMedia.storagePath, selectedMedia.bytes);
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                        if (downloadUrl != null) {
-                          setState(() => uploadedFileUrl = downloadUrl);
-                          showUploadMessage(context, 'Success!');
-                        } else {
-                          showUploadMessage(context, 'Failed to upload media');
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                    child: AutoSizeText(
+                      '* Required fields',
+                      textAlign: TextAlign.center,
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Montserrat',
+                        color: FlutterFlowTheme.tertiaryColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    child: InkWell(
+                      onTap: () async {
+                        final selectedMedia = await selectMedia();
+                        if (selectedMedia != null &&
+                            validateFileFormat(
+                                selectedMedia.storagePath, context)) {
+                          showUploadMessage(context, 'Uploading file...',
+                              showLoading: true);
+                          final downloadUrl = await uploadData(
+                              selectedMedia.storagePath, selectedMedia.bytes);
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          if (downloadUrl != null) {
+                            setState(() => uploadedFileUrl = downloadUrl);
+                            showUploadMessage(context, 'Success!');
+                          } else {
+                            showUploadMessage(
+                                context, 'Failed to upload media');
+                          }
                         }
-                      }
-                    },
-                    child: Container(
-                      width: 100,
-                      height: 100,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.network(
-                        'https://picsum.photos/seed/936/600',
-                        fit: BoxFit.contain,
+                      },
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child: Image.network(
+                          'https://picsum.photos/seed/936/600',
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
-                  child: TextFormField(
-                    controller: emailTextController,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelText: 'Email*',
-                      labelStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: FlutterFlowTheme.secondaryColor,
-                      ),
-                      hintText: 'example@example.com',
-                      hintStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: Color(0xB3FFFFFF),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+                    child: TextFormField(
+                      controller: emailTextController,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        labelText: 'Email*',
+                        labelStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
                         ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
+                        hintText: 'example@example.com',
+                        hintStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: Color(0xB3FFFFFF),
                         ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                    ),
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.secondaryColor,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: TextFormField(
-                    controller: passwordTextController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelText: 'Password*',
-                      labelStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: FlutterFlowTheme.secondaryColor,
-                      ),
-                      hintText: 'Must be 6+ characters',
-                      hintStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: Color(0xB3FFFFFF),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                    ),
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.secondaryColor,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
-                  child: TextFormField(
-                    controller: confirmPasswordTextController,
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelText: 'Confirm Password*',
-                      labelStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: FlutterFlowTheme.secondaryColor,
-                      ),
-                      hintText: 'Password',
-                      hintStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: Color(0xB3FFFFFF),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                    ),
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.secondaryColor,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: TextFormField(
-                    controller: textController2,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelText: 'First Name*',
-                      labelStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: FlutterFlowTheme.secondaryColor,
-                      ),
-                      hintText: 'John',
-                      hintStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: Color(0xB3FFFFFF),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                    ),
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.secondaryColor,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                  child: TextFormField(
-                    controller: textController3,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelText: 'Last Name*',
-                      labelStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: FlutterFlowTheme.secondaryColor,
-                      ),
-                      hintText: 'Doe',
-                      hintStyle: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: Color(0xB3FFFFFF),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(100),
-                          bottomRight: Radius.circular(100),
-                          topLeft: Radius.circular(100),
-                          topRight: Radius.circular(100),
-                        ),
-                      ),
-                    ),
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.secondaryColor,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: FFButtonWidget(
-                    onPressed: () async {
-                      if (passwordTextController.text !=
-                          confirmPasswordTextController.text) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "Passwords don't match!",
-                            ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
                           ),
-                        );
-                        return;
-                      }
-
-                      final user = await createAccountWithEmail(
-                        context,
-                        emailTextController.text,
-                        passwordTextController.text,
-                      );
-                      if (user == null) {
-                        return;
-                      }
-
-                      final lastName = textController3.text;
-                      final email = emailTextController.text;
-                      final dateLastLoggedIn = getCurrentTimestamp;
-                      final displayName = textController2.text;
-                      final photoUrl = uploadedFileUrl;
-                      final uid = '';
-                      final createdTime = getCurrentTimestamp;
-
-                      final usersRecordData = createUsersRecordData(
-                        lastName: lastName,
-                        email: email,
-                        dateLastLoggedIn: dateLastLoggedIn,
-                        displayName: displayName,
-                        photoUrl: photoUrl,
-                        uid: uid,
-                        createdTime: createdTime,
-                      );
-
-                      await UsersRecord.collection
-                          .doc(user.uid)
-                          .update(usersRecordData);
-
-                      await Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              NavBarPage(initialPage: 'HomePage'),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
                         ),
-                        (r) => false,
-                      );
-                    },
-                    text: 'Register',
-                    options: FFButtonOptions(
-                      width: double.infinity,
-                      height: 50,
-                      color: FlutterFlowTheme.secondaryColor,
-                      textStyle: FlutterFlowTheme.subtitle2.override(
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                      ),
+                      style: FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Montserrat',
-                        color: Color(0xFF4DB6AC),
+                        color: FlutterFlowTheme.secondaryColor,
                       ),
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                        width: 1,
-                      ),
-                      borderRadius: 1000,
                     ),
                   ),
-                )
-              ],
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    child: TextFormField(
+                      controller: passwordTextController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        labelText: 'Password*',
+                        labelStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                        hintText: 'Must be 6+ characters',
+                        hintStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: Color(0xB3FFFFFF),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                      ),
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Montserrat',
+                        color: FlutterFlowTheme.secondaryColor,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                    child: TextFormField(
+                      controller: confirmPasswordTextController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        labelText: 'Confirm Password*',
+                        labelStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                        hintText: 'Password',
+                        hintStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: Color(0xB3FFFFFF),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                      ),
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Montserrat',
+                        color: FlutterFlowTheme.secondaryColor,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: TextFormField(
+                      controller: textController2,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        labelText: 'First Name*',
+                        labelStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                        hintText: 'John',
+                        hintStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: Color(0xB3FFFFFF),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                      ),
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Montserrat',
+                        color: FlutterFlowTheme.secondaryColor,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                    child: TextFormField(
+                      controller: textController3,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        labelText: 'Last Name*',
+                        labelStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                        hintText: 'Doe',
+                        hintStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: Color(0xB3FFFFFF),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(100),
+                            bottomRight: Radius.circular(100),
+                            topLeft: Radius.circular(100),
+                            topRight: Radius.circular(100),
+                          ),
+                        ),
+                      ),
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Montserrat',
+                        color: FlutterFlowTheme.secondaryColor,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: FFButtonWidget(
+                      onPressed: () async {
+                        if (passwordTextController.text !=
+                            confirmPasswordTextController.text) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Passwords don't match!",
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+
+                        final user = await createAccountWithEmail(
+                          context,
+                          emailTextController.text,
+                          passwordTextController.text,
+                        );
+                        if (user == null) {
+                          return;
+                        }
+
+                        final lastName = textController3.text;
+                        final email = emailTextController.text;
+                        final dateLastLoggedIn = getCurrentTimestamp;
+                        final displayName = textController2.text;
+                        final photoUrl = uploadedFileUrl;
+                        final createdTime = getCurrentTimestamp;
+
+                        final usersRecordData = createUsersRecordData(
+                          lastName: lastName,
+                          email: email,
+                          dateLastLoggedIn: dateLastLoggedIn,
+                          displayName: displayName,
+                          photoUrl: photoUrl,
+                          createdTime: createdTime,
+                        );
+
+                        await UsersRecord.collection
+                            .doc(user.uid)
+                            .update(usersRecordData);
+
+                        await Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                NavBarPage(initialPage: 'HomePage'),
+                          ),
+                          (r) => false,
+                        );
+                      },
+                      text: 'Register',
+                      options: FFButtonOptions(
+                        width: double.infinity,
+                        height: 50,
+                        color: FlutterFlowTheme.secondaryColor,
+                        textStyle: FlutterFlowTheme.subtitle2.override(
+                          fontFamily: 'Montserrat',
+                          color: Color(0xFF4DB6AC),
+                        ),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                          width: 1,
+                        ),
+                        borderRadius: 1000,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),

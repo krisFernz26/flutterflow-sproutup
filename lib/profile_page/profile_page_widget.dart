@@ -397,12 +397,18 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                   stream: StartupsRecord.getDocument(
                                       profilePageUsersRecord.startup),
                                   builder: (context, snapshot) {
-                                    // Customize what your widget looks like when it's loading.
                                     if (!snapshot.hasData) {
                                       return Center(
                                           child: CircularProgressIndicator());
                                     }
                                     final rowStartupsRecord = snapshot.data;
+                                    if (snapshot.data == null) {
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                        child: Text('No registered Sprout'),
+                                      );
+                                    }
                                     return Padding(
                                       padding:
                                           EdgeInsets.fromLTRB(10, 0, 0, 10),

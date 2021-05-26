@@ -75,6 +75,7 @@ class _LandingPageWidgetState extends State<LandingPageWidget> {
                         fontFamily: 'Montserrat',
                         color: FlutterFlowTheme.secondaryColor,
                       ),
+                      elevation: 0,
                       borderSide: BorderSide(
                         color: FlutterFlowTheme.tertiaryColor,
                         width: 1,

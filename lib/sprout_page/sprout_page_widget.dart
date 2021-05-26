@@ -7,6 +7,7 @@ import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_video_player.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import '../flutter_flow/upload_media.dart';
+import '../main.dart';
 import '../room_page/room_page_widget.dart';
 import '../t_r_l_page/t_r_l_page_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -389,6 +390,46 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                                       fontFamily: 'Montserrat',
                                       color: FlutterFlowTheme.tertiaryColor,
                                     ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 50),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      FFButtonWidget(
+                                        onPressed: () async {
+                                          await sproutPageStartupsRecord
+                                              .reference
+                                              .delete();
+                                          await Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => NavBarPage(
+                                                  initialPage: 'HomePage'),
+                                            ),
+                                            (r) => false,
+                                          );
+                                        },
+                                        text: 'Delete Sprout',
+                                        options: FFButtonOptions(
+                                          width: 130,
+                                          height: 40,
+                                          color: Color(0xFFFF0003),
+                                          textStyle: FlutterFlowTheme.subtitle2
+                                              .override(
+                                            fontFamily: 'Montserrat',
+                                            color: Colors.white,
+                                          ),
+                                          borderSide: BorderSide(
+                                            color: Colors.transparent,
+                                            width: 1,
+                                          ),
+                                          borderRadius: 120,
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 )
                               ],

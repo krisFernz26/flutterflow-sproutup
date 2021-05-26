@@ -335,19 +335,6 @@ class _EditProfilePageWidgetState extends State<EditProfilePageWidget> {
                       );
 
                       await currentUserReference.update(usersRecordData);
-                      final lastName = textController2.text;
-                      final email = emailTextController.text;
-                      final displayName = textController1.text;
-                      final photoUrl = uploadedFileUrl;
-
-                      final usersRecordData = createUsersRecordData(
-                        lastName: lastName,
-                        email: email,
-                        displayName: displayName,
-                        photoUrl: photoUrl,
-                      );
-
-                      await widget.user.reference.update(usersRecordData);
                     },
                     text: 'Edit',
                     options: FFButtonOptions(

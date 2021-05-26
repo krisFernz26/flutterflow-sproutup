@@ -91,7 +91,7 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                             text: 'Posts',
                           ),
                           Tab(
-                            text: 'Projects',
+                            text: 'Sprouts',
                           )
                         ],
                       ),

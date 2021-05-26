@@ -64,9 +64,6 @@ abstract class StartupsRecord
   DocumentReference get userRegisterer;
 
   @nullable
-  double get trl;
-
-  @nullable
   @BuiltValueField(wireName: 'is_featured')
   bool get isFeatured;
 
@@ -78,6 +75,9 @@ abstract class StartupsRecord
 
   @nullable
   BuiltList<DocumentReference> get applicants;
+
+  @nullable
+  int get trl;
 
   @nullable
   @BuiltValueField(wireName: kDocumentReferenceField)
@@ -95,11 +95,11 @@ abstract class StartupsRecord
     ..applicantCount = 0
     ..location = ''
     ..investorCount = 0
-    ..trl = 0.0
     ..isFeatured = false
     ..followers = ListBuilder()
     ..investors = ListBuilder()
-    ..applicants = ListBuilder();
+    ..applicants = ListBuilder()
+    ..trl = 0;
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('startups');
@@ -127,8 +127,8 @@ Map<String, dynamic> createStartupsRecordData({
   String location,
   int investorCount,
   DocumentReference userRegisterer,
-  double trl,
   bool isFeatured,
+  int trl,
 }) =>
     serializers.serializeWith(
         StartupsRecord.serializer,
@@ -147,11 +147,11 @@ Map<String, dynamic> createStartupsRecordData({
           ..location = location
           ..investorCount = investorCount
           ..userRegisterer = userRegisterer
-          ..trl = trl
           ..isFeatured = isFeatured
           ..followers = null
           ..investors = null
-          ..applicants = null));
+          ..applicants = null
+          ..trl = trl));
 
 StartupsRecord get dummyStartupsRecord {
   final builder = StartupsRecordBuilder()
@@ -168,8 +168,8 @@ StartupsRecord get dummyStartupsRecord {
     ..applicantCount = dummyInteger
     ..location = dummyString
     ..investorCount = dummyInteger
-    ..trl = dummyDouble
-    ..isFeatured = dummyBoolean;
+    ..isFeatured = dummyBoolean
+    ..trl = dummyInteger;
   return builder.build();
 }
 

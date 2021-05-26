@@ -7,6 +7,7 @@ import '../flutter_flow/flutter_flow_widgets.dart';
 import '../flutter_flow/upload_media.dart';
 import '../main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -18,7 +19,8 @@ class RegistrationPageWidget extends StatefulWidget {
 }
 
 class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
-  String uploadedFileUrl;
+  String uploadedFileUrl1;
+  String uploadedFileUrl2;
   TextEditingController emailTextController;
   TextEditingController passwordTextController;
   TextEditingController confirmPasswordTextController;
@@ -109,7 +111,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                               selectedMedia.storagePath, selectedMedia.bytes);
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           if (downloadUrl != null) {
-                            setState(() => uploadedFileUrl = downloadUrl);
+                            setState(() => uploadedFileUrl1 = downloadUrl);
                             showUploadMessage(context, 'Success!');
                           } else {
                             showUploadMessage(
@@ -124,10 +126,54 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                         ),
-                        child: Image.network(
-                          'https://picsum.photos/seed/936/600',
+                        child: CachedNetworkImage(
+                          imageUrl: 'https://picsum.photos/seed/936/600',
                           fit: BoxFit.contain,
                         ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    child: FFButtonWidget(
+                      onPressed: () async {
+                        final selectedMedia = await selectMedia();
+                        if (selectedMedia != null &&
+                            validateFileFormat(
+                                selectedMedia.storagePath, context)) {
+                          showUploadMessage(context, 'Uploading file...',
+                              showLoading: true);
+                          final downloadUrl = await uploadData(
+                              selectedMedia.storagePath, selectedMedia.bytes);
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          if (downloadUrl != null) {
+                            setState(() => uploadedFileUrl2 = downloadUrl);
+                            showUploadMessage(context, 'Success!');
+                          } else {
+                            showUploadMessage(
+                                context, 'Failed to upload media');
+                          }
+                        }
+                      },
+                      text: 'Upload Profile Photo',
+                      icon: Icon(
+                        Icons.photo,
+                        size: 15,
+                      ),
+                      options: FFButtonOptions(
+                        width: 300,
+                        height: 40,
+                        color: FlutterFlowTheme.tertiaryColor,
+                        textStyle: FlutterFlowTheme.subtitle2.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.primaryColor,
+                        ),
+                        elevation: 0,
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                          width: 1,
+                        ),
+                        borderRadius: 120,
                       ),
                     ),
                   ),
@@ -400,7 +446,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                         final email = emailTextController.text;
                         final dateLastLoggedIn = getCurrentTimestamp;
                         final displayName = textController2.text;
-                        final photoUrl = uploadedFileUrl;
+                        final photoUrl = uploadedFileUrl2;
                         final createdTime = getCurrentTimestamp;
 
                         final usersRecordData = createUsersRecordData(

@@ -27,9 +27,6 @@ abstract class PostsRecord implements Built<PostsRecord, PostsRecordBuilder> {
   BuiltList<String> get images;
 
   @nullable
-  String get video;
-
-  @nullable
   @BuiltValueField(wireName: 'date_posted')
   Timestamp get datePosted;
 
@@ -56,7 +53,6 @@ abstract class PostsRecord implements Built<PostsRecord, PostsRecordBuilder> {
     ..title = ''
     ..body = ''
     ..images = ListBuilder()
-    ..video = ''
     ..likesCount = 0
     ..likedUsers = ListBuilder()
     ..thumbnail = '';
@@ -78,7 +74,6 @@ Map<String, dynamic> createPostsRecordData({
   DocumentReference user,
   DocumentReference startup,
   String body,
-  String video,
   Timestamp datePosted,
   Timestamp dateUpdated,
   int likesCount,
@@ -92,7 +87,6 @@ Map<String, dynamic> createPostsRecordData({
           ..startup = startup
           ..body = body
           ..images = null
-          ..video = video
           ..datePosted = datePosted
           ..dateUpdated = dateUpdated
           ..likesCount = likesCount
@@ -104,7 +98,6 @@ PostsRecord get dummyPostsRecord {
     ..title = dummyString
     ..body = dummyString
     ..images = ListBuilder([dummyImagePath, dummyImagePath])
-    ..video = dummyVideoPath
     ..datePosted = dummyTimestamp
     ..dateUpdated = dummyTimestamp
     ..likesCount = dummyInteger

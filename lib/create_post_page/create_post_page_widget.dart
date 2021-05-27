@@ -184,7 +184,6 @@ class _CreatePostPageWidgetState extends State<CreatePostPageWidget> {
                           final startup =
                               createPostPageStartupsRecord.reference;
                           final body = textController2.text;
-                          final video = '';
                           final datePosted = getCurrentTimestamp;
                           final dateUpdated = getCurrentTimestamp;
                           final likesCount = 1;
@@ -196,7 +195,6 @@ class _CreatePostPageWidgetState extends State<CreatePostPageWidget> {
                               user: user,
                               startup: startup,
                               body: body,
-                              video: video,
                               datePosted: datePosted,
                               dateUpdated: dateUpdated,
                               likesCount: likesCount,

@@ -141,7 +141,7 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
@@ -157,6 +157,7 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                                           ),
                                           child: Image.network(
                                             sproutPageStartupsRecord.logo,
+                                            fit: BoxFit.fill,
                                           ),
                                         ),
                                       ),

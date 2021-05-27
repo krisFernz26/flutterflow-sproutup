@@ -5,6 +5,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import '../flutter_flow/upload_media.dart';
+import '../main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -239,10 +240,10 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                                 width: 1,
                               ),
                               borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(100),
-                                bottomRight: Radius.circular(100),
-                                topLeft: Radius.circular(100),
-                                topRight: Radius.circular(100),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -251,10 +252,10 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                                 width: 1,
                               ),
                               borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(100),
-                                bottomRight: Radius.circular(100),
-                                topLeft: Radius.circular(100),
-                                topRight: Radius.circular(100),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
                               ),
                             ),
                           ),
@@ -287,10 +288,10 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                                 width: 1,
                               ),
                               borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(100),
-                                bottomRight: Radius.circular(100),
-                                topLeft: Radius.circular(100),
-                                topRight: Radius.circular(100),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -299,10 +300,10 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                                 width: 1,
                               ),
                               borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(100),
-                                bottomRight: Radius.circular(100),
-                                topLeft: Radius.circular(100),
-                                topRight: Radius.circular(100),
+                                bottomLeft: Radius.circular(10),
+                                bottomRight: Radius.circular(10),
+                                topLeft: Radius.circular(10),
+                                topRight: Radius.circular(10),
                               ),
                             ),
                           ),
@@ -431,6 +432,14 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
 
                             await editStartupPageStartupsRecord.reference
                                 .update(startupsRecordData);
+                            await Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    NavBarPage(initialPage: 'SproutPage'),
+                              ),
+                              (r) => false,
+                            );
                           },
                           text: 'Edit',
                           options: FFButtonOptions(

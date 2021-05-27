@@ -1,5 +1,6 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
+import '../create_post_page/create_post_page_widget.dart';
 import '../edit_profile_page/edit_profile_page_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
@@ -758,8 +759,14 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                               Padding(
                                 padding: EdgeInsets.fromLTRB(0, 20, 0, 5),
                                 child: FFButtonWidget(
-                                  onPressed: () {
-                                    print('Button pressed ...');
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CreatePostPageWidget(),
+                                      ),
+                                    );
                                   },
                                   text: 'Add Post',
                                   icon: Icon(

@@ -5,6 +5,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import '../flutter_flow/upload_media.dart';
+import '../main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -103,6 +104,7 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                         ),
                         child: Image.network(
                           'https://picsum.photos/seed/342/600',
+                          fit: BoxFit.fill,
                         ),
                       ),
                     ),
@@ -215,10 +217,10 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                             width: 1,
                           ),
                           borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(100),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(100),
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -227,10 +229,10 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                             width: 1,
                           ),
                           borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(100),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(100),
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
                           ),
                         ),
                       ),
@@ -263,10 +265,10 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                             width: 1,
                           ),
                           borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(100),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(100),
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
@@ -275,10 +277,10 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                             width: 1,
                           ),
                           borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(100),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(100),
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
                           ),
                         ),
                       ),
@@ -398,27 +400,56 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                         final userRegisterer = currentUserReference;
                         final isFeatured = false;
                         final trl = 1;
+                        final videoUrl = '';
+                        final followerCount = 1;
+                        final applicantCount = 1;
+                        final investorCount = 1;
 
-                        final startupsRecordData = createStartupsRecordData(
-                          name: name,
-                          dateRegistered: dateRegistered,
-                          dateUpdated: dateUpdated,
-                          logo: logo,
-                          description: description,
-                          motto: motto,
-                          lookingFor: lookingFor,
-                          location: location,
-                          userRegisterer: userRegisterer,
-                          isFeatured: isFeatured,
-                          trl: trl,
-                        );
+                        final startupsRecordData = {
+                          ...createStartupsRecordData(
+                            name: name,
+                            dateRegistered: dateRegistered,
+                            dateUpdated: dateUpdated,
+                            logo: logo,
+                            description: description,
+                            motto: motto,
+                            lookingFor: lookingFor,
+                            location: location,
+                            userRegisterer: userRegisterer,
+                            isFeatured: isFeatured,
+                            trl: trl,
+                            videoUrl: videoUrl,
+                            followerCount: followerCount,
+                            applicantCount: applicantCount,
+                            investorCount: investorCount,
+                          ),
+                          'images': FieldValue.arrayUnion(['']),
+                          'followers':
+                              FieldValue.arrayUnion([currentUserReference]),
+                          'investors':
+                              FieldValue.arrayUnion([currentUserReference]),
+                          'applicants':
+                              FieldValue.arrayUnion([currentUserReference]),
+                        };
 
                         await StartupsRecord.collection
                             .doc()
                             .set(startupsRecordData);
-                        final usersRecordData = createUsersRecordData();
+                        final usersRecordData = {
+                          'follow_count': FieldValue.increment(1),
+                          'investment_count': FieldValue.increment(1),
+                          'application_count': FieldValue.increment(1),
+                        };
 
                         await currentUserReference.update(usersRecordData);
+                        await Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                NavBarPage(initialPage: 'SproutPage'),
+                          ),
+                          (r) => false,
+                        );
                       },
                       text: 'Submit',
                       options: FFButtonOptions(

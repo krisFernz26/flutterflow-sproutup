@@ -1,5 +1,6 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
+import '../edit_post_page/edit_post_page_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
@@ -40,7 +41,26 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
             color: FlutterFlowTheme.tertiaryColor,
           ),
         ),
-        actions: [],
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditPostPageWidget(
+                    post: widget.post,
+                  ),
+                ),
+              );
+            },
+            icon: Icon(
+              Icons.edit,
+              color: FlutterFlowTheme.tertiaryColor,
+              size: 30,
+            ),
+            iconSize: 30,
+          )
+        ],
         centerTitle: true,
         elevation: 0,
       ),

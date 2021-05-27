@@ -449,6 +449,11 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                         final displayName = textController2.text;
                         final photoUrl = uploadedFileUrl2;
                         final createdTime = getCurrentTimestamp;
+                        final investmentCount = 0;
+                        final followCount = 0;
+                        final applicationCount = 0;
+                        final isPremium = false;
+                        final likesCount = 0;
 
                         final usersRecordData = createUsersRecordData(
                           lastName: lastName,
@@ -457,6 +462,11 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                           displayName: displayName,
                           photoUrl: photoUrl,
                           createdTime: createdTime,
+                          investmentCount: investmentCount,
+                          followCount: followCount,
+                          applicationCount: applicationCount,
+                          isPremium: isPremium,
+                          likesCount: likesCount,
                         );
 
                         await UsersRecord.collection

@@ -416,6 +416,9 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                         await StartupsRecord.collection
                             .doc()
                             .set(startupsRecordData);
+                        final usersRecordData = createUsersRecordData();
+
+                        await currentUserReference.update(usersRecordData);
                       },
                       text: 'Submit',
                       options: FFButtonOptions(

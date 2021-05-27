@@ -302,6 +302,7 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
                           ),
                           child: Image.network(
                             widget.startup.logo,
+                            fit: BoxFit.fill,
                           ),
                         ),
                       ),

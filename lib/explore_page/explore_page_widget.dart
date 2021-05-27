@@ -618,6 +618,8 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                     .network(
                                                                   listViewStartupsRecord
                                                                       .logo,
+                                                                  fit: BoxFit
+                                                                      .fill,
                                                                 ),
                                                               ),
                                                             ),

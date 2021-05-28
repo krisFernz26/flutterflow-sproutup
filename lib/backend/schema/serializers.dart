@@ -9,6 +9,7 @@ import 'posts_record.dart';
 import 'messages_record.dart';
 import 'rooms_record.dart';
 import 'reports_record.dart';
+import 'trl_progress_record.dart';
 
 part 'serializers.g.dart';
 
@@ -21,6 +22,7 @@ const kDocumentReferenceField = 'Document__Reference__Field';
   MessagesRecord,
   RoomsRecord,
   ReportsRecord,
+  TrlProgressRecord,
 ])
 final Serializers serializers = (_$serializers.toBuilder()
       ..add(DocumentReferenceSerializer())

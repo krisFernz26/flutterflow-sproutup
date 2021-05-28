@@ -10,14 +10,17 @@ import 'schema/posts_record.dart';
 import 'schema/messages_record.dart';
 import 'schema/rooms_record.dart';
 import 'schema/reports_record.dart';
+import 'schema/trl_progress_record.dart';
 import 'schema/serializers.dart';
 
+export 'package:cloud_firestore/cloud_firestore.dart';
 export 'schema/users_record.dart';
 export 'schema/startups_record.dart';
 export 'schema/posts_record.dart';
 export 'schema/messages_record.dart';
 export 'schema/rooms_record.dart';
 export 'schema/reports_record.dart';
+export 'schema/trl_progress_record.dart';
 
 Stream<List<UsersRecord>> queryUsersRecord(
         {Query Function(Query) queryBuilder,
@@ -59,6 +62,13 @@ Stream<List<ReportsRecord>> queryReportsRecord(
         int limit = -1,
         bool singleRecord = false}) =>
     queryCollection(ReportsRecord.collection, ReportsRecord.serializer,
+        queryBuilder: queryBuilder, limit: limit, singleRecord: singleRecord);
+
+Stream<List<TrlProgressRecord>> queryTrlProgressRecord(
+        {Query Function(Query) queryBuilder,
+        int limit = -1,
+        bool singleRecord = false}) =>
+    queryCollection(TrlProgressRecord.collection, TrlProgressRecord.serializer,
         queryBuilder: queryBuilder, limit: limit, singleRecord: singleRecord);
 
 Stream<List<T>> queryCollection<T>(

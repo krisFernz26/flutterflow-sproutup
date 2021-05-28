@@ -1,5 +1,6 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
+import '../create_post_page/create_post_page_widget.dart';
 import '../edit_profile_page/edit_profile_page_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
@@ -90,6 +91,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
             centerTitle: true,
             elevation: 0,
           ),
+          backgroundColor: FlutterFlowTheme.primaryColor,
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
               await Navigator.push(
@@ -183,6 +185,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                           ),
                                           child: Image.network(
                                             profilePageUsersRecord.photoUrl,
+                                            fit: BoxFit.fill,
                                           ),
                                         ),
                                       ),
@@ -378,16 +381,31 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                     ],
                                   ),
                                 ),
-                                StreamBuilder<StartupsRecord>(
-                                  stream: StartupsRecord.getDocument(
-                                      profilePageUsersRecord.startup),
+                                StreamBuilder<List<StartupsRecord>>(
+                                  stream: queryStartupsRecord(
+                                    queryBuilder: (startupsRecord) =>
+                                        startupsRecord.where('user_registerer',
+                                            isEqualTo: profilePageUsersRecord
+                                                .reference),
+                                    singleRecord: true,
+                                  ),
                                   builder: (context, snapshot) {
                                     // Customize what your widget looks like when it's loading.
                                     if (!snapshot.hasData) {
                                       return Center(
                                           child: CircularProgressIndicator());
                                     }
-                                    final rowStartupsRecord = snapshot.data;
+                                    List<StartupsRecord> rowStartupsRecordList =
+                                        snapshot.data;
+                                    // Customize what your widget looks like with no query results.
+                                    if (snapshot.data.isEmpty) {
+                                      // return Container();
+                                      // For now, we'll just include some dummy data.
+                                      rowStartupsRecordList =
+                                          createDummyStartupsRecord(count: 1);
+                                    }
+                                    final rowStartupsRecord =
+                                        rowStartupsRecordList.first;
                                     return Padding(
                                       padding:
                                           EdgeInsets.fromLTRB(10, 0, 0, 10),
@@ -406,6 +424,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                               ),
                                               child: Image.network(
                                                 rowStartupsRecord.logo,
+                                                fit: BoxFit.fill,
                                               ),
                                             ),
                                           ),
@@ -588,9 +607,16 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      StreamBuilder<StartupsRecord>(
-                                        stream: StartupsRecord.getDocument(
-                                            profilePageUsersRecord.startup),
+                                      StreamBuilder<List<StartupsRecord>>(
+                                        stream: queryStartupsRecord(
+                                          queryBuilder: (startupsRecord) =>
+                                              startupsRecord.where(
+                                                  'user_registerer',
+                                                  isEqualTo:
+                                                      profilePageUsersRecord
+                                                          .reference),
+                                          singleRecord: true,
+                                        ),
                                         builder: (context, snapshot) {
                                           // Customize what your widget looks like when it's loading.
                                           if (!snapshot.hasData) {
@@ -598,8 +624,19 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                 child:
                                                     CircularProgressIndicator());
                                           }
-                                          final textStartupsRecord =
+                                          List<StartupsRecord>
+                                              textStartupsRecordList =
                                               snapshot.data;
+                                          // Customize what your widget looks like with no query results.
+                                          if (snapshot.data.isEmpty) {
+                                            // return Container();
+                                            // For now, we'll just include some dummy data.
+                                            textStartupsRecordList =
+                                                createDummyStartupsRecord(
+                                                    count: 1);
+                                          }
+                                          final textStartupsRecord =
+                                              textStartupsRecordList.first;
                                           return Text(
                                             textStartupsRecord.name,
                                             style: FlutterFlowTheme.title1
@@ -733,8 +770,14 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                               Padding(
                                 padding: EdgeInsets.fromLTRB(0, 20, 0, 5),
                                 child: FFButtonWidget(
-                                  onPressed: () {
-                                    print('Button pressed ...');
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CreatePostPageWidget(),
+                                      ),
+                                    );
                                   },
                                   text: 'Add Post',
                                   icon: Icon(
@@ -1189,6 +1232,8 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                   Image.network(
                                                                 listViewStartupsRecord
                                                                     .logo,
+                                                                fit:
+                                                                    BoxFit.fill,
                                                               ),
                                                             ),
                                                           ),

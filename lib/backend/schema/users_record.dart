@@ -50,9 +50,6 @@ abstract class UsersRecord implements Built<UsersRecord, UsersRecordBuilder> {
   int get applicationCount;
 
   @nullable
-  DocumentReference get startup;
-
-  @nullable
   @BuiltValueField(wireName: 'is_premium')
   bool get isPremium;
 
@@ -99,7 +96,6 @@ Map<String, dynamic> createUsersRecordData({
   int investmentCount,
   int followCount,
   int applicationCount,
-  DocumentReference startup,
   bool isPremium,
   int likesCount,
 }) =>
@@ -116,7 +112,6 @@ Map<String, dynamic> createUsersRecordData({
           ..investmentCount = investmentCount
           ..followCount = followCount
           ..applicationCount = applicationCount
-          ..startup = startup
           ..isPremium = isPremium
           ..likesCount = likesCount));
 

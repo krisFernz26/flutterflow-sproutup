@@ -46,6 +46,7 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
         centerTitle: true,
         elevation: 0,
       ),
+      backgroundColor: FlutterFlowTheme.primaryColor,
       body: SafeArea(
         child: Container(
           width: double.infinity,
@@ -286,7 +287,7 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -301,6 +302,7 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
                           ),
                           child: Image.network(
                             widget.startup.logo,
+                            fit: BoxFit.fill,
                           ),
                         ),
                       ),
@@ -472,6 +474,7 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
                               ),
                               child: Image.network(
                                 rowUsersRecord.photoUrl,
+                                fit: BoxFit.fill,
                               ),
                             ),
                           ),

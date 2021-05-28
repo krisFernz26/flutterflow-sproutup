@@ -5,6 +5,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import '../flutter_flow/upload_media.dart';
+import '../profile_page/profile_page_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,7 @@ class _EditProfilePageWidgetState extends State<EditProfilePageWidget> {
         centerTitle: true,
         elevation: 0,
       ),
+      backgroundColor: FlutterFlowTheme.primaryColor,
       body: SafeArea(
         child: Container(
           width: double.infinity,
@@ -334,7 +336,13 @@ class _EditProfilePageWidgetState extends State<EditProfilePageWidget> {
                       );
 
                       await currentUserReference.update(usersRecordData);
-                      await widget.user.reference.update(usersRecordData);
+                      await Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProfilePageWidget(),
+                        ),
+                        (r) => false,
+                      );
                     },
                     text: 'Edit',
                     options: FFButtonOptions(

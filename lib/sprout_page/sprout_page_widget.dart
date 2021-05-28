@@ -3,11 +3,13 @@ import 'package:sprout_up/create_startup_page/create_startup_page_widget.dart';
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../backend/firebase_storage/storage.dart';
+import '../edit_startup_page/edit_startup_page_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_video_player.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import '../flutter_flow/upload_media.dart';
+import '../main.dart';
 import '../room_page/room_page_widget.dart';
 import '../t_r_l_page/t_r_l_page_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -120,8 +122,13 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
             ),
             actions: [
               IconButton(
-                onPressed: () {
-                  print('IconButton pressed ...');
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditStartupPageWidget(),
+                    ),
+                  );
                 },
                 icon: Icon(
                   Icons.edit_sharp,
@@ -134,6 +141,7 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
             centerTitle: true,
             elevation: 0,
           ),
+          backgroundColor: FlutterFlowTheme.primaryColor,
           body: SafeArea(
             child: Container(
               width: double.infinity,
@@ -185,7 +193,7 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
@@ -201,6 +209,7 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                                           ),
                                           child: Image.network(
                                             sproutPageStartupsRecord.logo,
+                                            fit: BoxFit.fill,
                                           ),
                                         ),
                                       ),
@@ -434,6 +443,46 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                                       fontFamily: 'Montserrat',
                                       color: FlutterFlowTheme.tertiaryColor,
                                     ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 50),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      FFButtonWidget(
+                                        onPressed: () async {
+                                          await sproutPageStartupsRecord
+                                              .reference
+                                              .delete();
+                                          await Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => NavBarPage(
+                                                  initialPage: 'HomePage'),
+                                            ),
+                                            (r) => false,
+                                          );
+                                        },
+                                        text: 'Delete Sprout',
+                                        options: FFButtonOptions(
+                                          width: 130,
+                                          height: 40,
+                                          color: Color(0xFFFF0003),
+                                          textStyle: FlutterFlowTheme.subtitle2
+                                              .override(
+                                            fontFamily: 'Montserrat',
+                                            color: Colors.white,
+                                          ),
+                                          borderSide: BorderSide(
+                                            color: Colors.transparent,
+                                            width: 1,
+                                          ),
+                                          borderRadius: 120,
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 )
                               ],

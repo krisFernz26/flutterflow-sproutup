@@ -7,6 +7,7 @@ import '../flutter_flow/flutter_flow_widgets.dart';
 import '../flutter_flow/upload_media.dart';
 import '../main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -18,7 +19,8 @@ class RegistrationPageWidget extends StatefulWidget {
 }
 
 class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
-  String uploadedFileUrl;
+  String uploadedFileUrl1;
+  String uploadedFileUrl2;
   TextEditingController emailTextController;
   TextEditingController passwordTextController;
   TextEditingController confirmPasswordTextController;
@@ -36,23 +38,6 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
     textController3 = TextEditingController();
   }
 
-  void uploadPhoto() async {
-    final selectedMedia = await selectMedia();
-    if (selectedMedia != null &&
-        validateFileFormat(selectedMedia.storagePath, context)) {
-      showUploadMessage(context, 'Uploading file...', showLoading: true);
-      final downloadUrl =
-          await uploadData(selectedMedia.storagePath, selectedMedia.bytes);
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      if (downloadUrl != null) {
-        setState(() => uploadedFileUrl = downloadUrl);
-        showUploadMessage(context, 'Success!');
-      } else {
-        showUploadMessage(context, 'Failed to upload media');
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,6 +50,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
         centerTitle: true,
         elevation: 0,
       ),
+      backgroundColor: FlutterFlowTheme.primaryColor,
       body: SafeArea(
         child: Container(
           width: double.infinity,
@@ -114,26 +100,83 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                    child: uploadedFileUrl.isEmpty
-                        ? ElevatedButton.icon(
-                            onPressed: uploadPhoto,
-                            icon: Icon(Icons.add_a_photo),
-                            label: Text('Upload Photo *'))
-                        : InkWell(
-                            onTap: uploadPhoto,
-                            child: Container(
-                              width: 100,
-                              height: 100,
-                              clipBehavior: Clip.antiAlias,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                              ),
-                              child: Image.network(
-                                uploadedFileUrl,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
+                    child: InkWell(
+                      onTap: () async {
+                        final selectedMedia = await selectMedia();
+                        if (selectedMedia != null &&
+                            validateFileFormat(
+                                selectedMedia.storagePath, context)) {
+                          showUploadMessage(context, 'Uploading file...',
+                              showLoading: true);
+                          final downloadUrl = await uploadData(
+                              selectedMedia.storagePath, selectedMedia.bytes);
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          if (downloadUrl != null) {
+                            setState(() => uploadedFileUrl1 = downloadUrl);
+                            showUploadMessage(context, 'Success!');
+                          } else {
+                            showUploadMessage(
+                                context, 'Failed to upload media');
+                          }
+                        }
+                      },
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl: 'https://picsum.photos/seed/936/600',
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    child: FFButtonWidget(
+                      onPressed: () async {
+                        final selectedMedia = await selectMedia();
+                        if (selectedMedia != null &&
+                            validateFileFormat(
+                                selectedMedia.storagePath, context)) {
+                          showUploadMessage(context, 'Uploading file...',
+                              showLoading: true);
+                          final downloadUrl = await uploadData(
+                              selectedMedia.storagePath, selectedMedia.bytes);
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          if (downloadUrl != null) {
+                            setState(() => uploadedFileUrl2 = downloadUrl);
+                            showUploadMessage(context, 'Success!');
+                          } else {
+                            showUploadMessage(
+                                context, 'Failed to upload media');
+                          }
+                        }
+                      },
+                      text: 'Upload Profile Photo',
+                      icon: Icon(
+                        Icons.photo,
+                        size: 15,
+                      ),
+                      options: FFButtonOptions(
+                        width: 300,
+                        height: 40,
+                        color: FlutterFlowTheme.tertiaryColor,
+                        textStyle: FlutterFlowTheme.subtitle2.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.primaryColor,
+                        ),
+                        elevation: 0,
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                          width: 1,
+                        ),
+                        borderRadius: 120,
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
@@ -404,8 +447,13 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                         final email = emailTextController.text;
                         final dateLastLoggedIn = getCurrentTimestamp;
                         final displayName = textController2.text;
-                        final photoUrl = uploadedFileUrl;
+                        final photoUrl = uploadedFileUrl2;
                         final createdTime = getCurrentTimestamp;
+                        final investmentCount = 0;
+                        final followCount = 0;
+                        final applicationCount = 0;
+                        final isPremium = false;
+                        final likesCount = 0;
 
                         final usersRecordData = createUsersRecordData(
                           lastName: lastName,
@@ -414,6 +462,11 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                           displayName: displayName,
                           photoUrl: photoUrl,
                           createdTime: createdTime,
+                          investmentCount: investmentCount,
+                          followCount: followCount,
+                          applicationCount: applicationCount,
+                          isPremium: isPremium,
+                          likesCount: likesCount,
                         );
 
                         await UsersRecord.collection

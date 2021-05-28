@@ -1,8 +1,10 @@
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
+import '../edit_post_page/edit_post_page_widget.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
+import '../main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -40,10 +42,30 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
             color: FlutterFlowTheme.tertiaryColor,
           ),
         ),
-        actions: [],
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditPostPageWidget(
+                    post: widget.post,
+                  ),
+                ),
+              );
+            },
+            icon: Icon(
+              Icons.edit,
+              color: FlutterFlowTheme.tertiaryColor,
+              size: 30,
+            ),
+            iconSize: 30,
+          )
+        ],
         centerTitle: true,
         elevation: 0,
       ),
+      backgroundColor: FlutterFlowTheme.primaryColor,
       body: SafeArea(
         child: Container(
           width: double.infinity,
@@ -80,6 +102,7 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
                             ),
                             child: Image.network(
                               rowUsersRecord.photoUrl,
+                              fit: BoxFit.fill,
                             ),
                           ),
                         ),
@@ -287,6 +310,43 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
                     color: FlutterFlowTheme.tertiaryColor,
                   ),
                 ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                    child: FFButtonWidget(
+                      onPressed: () async {
+                        await widget.post.reference.delete();
+                        await Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                NavBarPage(initialPage: 'ExplorePage'),
+                          ),
+                          (r) => false,
+                        );
+                      },
+                      text: 'Delete Post',
+                      options: FFButtonOptions(
+                        width: 130,
+                        height: 40,
+                        color: FlutterFlowTheme.tertiaryColor,
+                        textStyle: FlutterFlowTheme.subtitle2.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.primaryColor,
+                        ),
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                          width: 1,
+                        ),
+                        borderRadius: 12,
+                      ),
+                    ),
+                  )
+                ],
               )
             ],
           ),

@@ -13,7 +13,7 @@ class FlutterFlowTheme {
   static TextStyle get title1 => GoogleFonts.getFont(
         'Montserrat',
         color: Color(0xFF303030),
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
         fontSize: 24,
       );
   static TextStyle get title2 => GoogleFonts.getFont(

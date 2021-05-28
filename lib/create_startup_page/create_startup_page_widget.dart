@@ -399,7 +399,7 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                         final location = textController4.text;
                         final userRegisterer = currentUserReference;
                         final isFeatured = false;
-                        final trl = 1;
+                        final trl = 0;
                         final videoUrl = '';
                         final followerCount = 1;
                         final applicantCount = 1;

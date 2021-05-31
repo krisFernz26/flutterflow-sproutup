@@ -36,6 +36,9 @@ abstract class ReportsRecord
   String get status;
 
   @nullable
+  DocumentReference get startup;
+
+  @nullable
   @BuiltValueField(wireName: kDocumentReferenceField)
   DocumentReference get reference;
 
@@ -64,6 +67,7 @@ Map<String, dynamic> createReportsRecordData({
   Timestamp dateSent,
   Timestamp dateInvestigated,
   String status,
+  DocumentReference startup,
 }) =>
     serializers.serializeWith(
         ReportsRecord.serializer,
@@ -74,7 +78,8 @@ Map<String, dynamic> createReportsRecordData({
           ..text = text
           ..dateSent = dateSent
           ..dateInvestigated = dateInvestigated
-          ..status = status));
+          ..status = status
+          ..startup = startup));
 
 ReportsRecord get dummyReportsRecord {
   final builder = ReportsRecordBuilder()

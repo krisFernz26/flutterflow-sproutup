@@ -4,6 +4,10 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_video_player.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
+import '../send_application_page/send_application_page_widget.dart';
+import '../send_donation_page/send_donation_page_widget.dart';
+import '../send_partnership_request_page/send_partnership_request_page_widget.dart';
+import '../send_report_page/send_report_page_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -137,96 +141,6 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
                   padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                   child: Row(
                     mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      FFButtonWidget(
-                        onPressed: () {
-                          print('Button pressed ...');
-                        },
-                        text: 'Apply',
-                        icon: Icon(
-                          Icons.done,
-                          size: 15,
-                        ),
-                        options: FFButtonOptions(
-                          width: 130,
-                          height: 40,
-                          color: FlutterFlowTheme.secondaryColor,
-                          textStyle: FlutterFlowTheme.subtitle2.override(
-                            fontFamily: 'Montserrat',
-                            color: FlutterFlowTheme.primaryColor,
-                          ),
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                            width: 1,
-                          ),
-                          borderRadius: 120,
-                        ),
-                      ),
-                      FFButtonWidget(
-                        onPressed: () {
-                          print('Button pressed ...');
-                        },
-                        text: 'Fund',
-                        icon: FaIcon(
-                          FontAwesomeIcons.moneyCheckAlt,
-                        ),
-                        options: FFButtonOptions(
-                          width: 130,
-                          height: 40,
-                          color: FlutterFlowTheme.secondaryColor,
-                          textStyle: FlutterFlowTheme.subtitle2.override(
-                            fontFamily: 'Montserrat',
-                            color: FlutterFlowTheme.primaryColor,
-                          ),
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                            width: 1,
-                          ),
-                          borderRadius: 120,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 9, 0, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FFButtonWidget(
-                        onPressed: () {
-                          print('Button pressed ...');
-                        },
-                        text: 'Partner',
-                        icon: Icon(
-                          Icons.pan_tool,
-                          size: 15,
-                        ),
-                        options: FFButtonOptions(
-                          width: 130,
-                          height: 40,
-                          color: FlutterFlowTheme.secondaryColor,
-                          textStyle: FlutterFlowTheme.subtitle2.override(
-                            fontFamily: 'Montserrat',
-                            color: FlutterFlowTheme.primaryColor,
-                          ),
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                            width: 1,
-                          ),
-                          borderRadius: 120,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       AutoSizeText(
@@ -263,8 +177,15 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
                         ),
                       ),
                       FFButtonWidget(
-                        onPressed: () {
-                          print('Button pressed ...');
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SendReportPageWidget(
+                                startup: widget.startup,
+                              ),
+                            ),
+                          );
                         },
                         text: 'Report',
                         options: FFButtonOptions(
@@ -275,6 +196,118 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
                             fontFamily: 'Montserrat',
                             color: FlutterFlowTheme.primaryColor,
                             fontWeight: FontWeight.w500,
+                          ),
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                            width: 1,
+                          ),
+                          borderRadius: 120,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      FFButtonWidget(
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SendApplicationPageWidget(
+                                startup: widget.startup,
+                              ),
+                            ),
+                          );
+                        },
+                        text: 'Apply',
+                        icon: Icon(
+                          Icons.done,
+                          size: 15,
+                        ),
+                        options: FFButtonOptions(
+                          width: 130,
+                          height: 40,
+                          color: FlutterFlowTheme.secondaryColor,
+                          textStyle: FlutterFlowTheme.subtitle2.override(
+                            fontFamily: 'Montserrat',
+                            color: FlutterFlowTheme.primaryColor,
+                          ),
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                            width: 1,
+                          ),
+                          borderRadius: 120,
+                        ),
+                      ),
+                      FFButtonWidget(
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SendDonationPageWidget(
+                                startup: widget.startup,
+                              ),
+                            ),
+                          );
+                        },
+                        text: 'Fund',
+                        icon: FaIcon(
+                          FontAwesomeIcons.moneyCheckAlt,
+                        ),
+                        options: FFButtonOptions(
+                          width: 130,
+                          height: 40,
+                          color: FlutterFlowTheme.secondaryColor,
+                          textStyle: FlutterFlowTheme.subtitle2.override(
+                            fontFamily: 'Montserrat',
+                            color: FlutterFlowTheme.primaryColor,
+                          ),
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                            width: 1,
+                          ),
+                          borderRadius: 120,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 9, 0, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FFButtonWidget(
+                        onPressed: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  SendPartnershipRequestPageWidget(
+                                startup: widget.startup,
+                              ),
+                            ),
+                          );
+                        },
+                        text: 'Partner',
+                        icon: Icon(
+                          Icons.pan_tool,
+                          size: 15,
+                        ),
+                        options: FFButtonOptions(
+                          width: 130,
+                          height: 40,
+                          color: FlutterFlowTheme.secondaryColor,
+                          textStyle: FlutterFlowTheme.subtitle2.override(
+                            fontFamily: 'Montserrat',
+                            color: FlutterFlowTheme.primaryColor,
                           ),
                           borderSide: BorderSide(
                             color: Colors.transparent,

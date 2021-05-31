@@ -4,6 +4,9 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import '../profile_page/profile_page_widget.dart';
+import '../send_application_page/send_application_page_widget.dart';
+import '../send_donation_page/send_donation_page_widget.dart';
+import '../send_partnership_request_page/send_partnership_request_page_widget.dart';
 import '../startup_info_page/startup_info_page_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -371,8 +374,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   CrossAxisAlignment.center,
                                               children: [
                                                 FFButtonWidget(
-                                                  onPressed: () {
-                                                    print('Button pressed ...');
+                                                  onPressed: () async {
+                                                    await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            SendApplicationPageWidget(
+                                                          startup:
+                                                              pageViewStartupsRecord,
+                                                        ),
+                                                      ),
+                                                    );
                                                   },
                                                   text: 'Apply',
                                                   icon: Icon(
@@ -399,8 +411,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   ),
                                                 ),
                                                 FFButtonWidget(
-                                                  onPressed: () {
-                                                    print('Button pressed ...');
+                                                  onPressed: () async {
+                                                    await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            SendDonationPageWidget(
+                                                          startup:
+                                                              pageViewStartupsRecord,
+                                                        ),
+                                                      ),
+                                                    );
                                                   },
                                                   text: 'Fund',
                                                   icon: FaIcon(
@@ -438,8 +459,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   MainAxisAlignment.center,
                                               children: [
                                                 FFButtonWidget(
-                                                  onPressed: () {
-                                                    print('Button pressed ...');
+                                                  onPressed: () async {
+                                                    await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            SendPartnershipRequestPageWidget(
+                                                          startup:
+                                                              pageViewStartupsRecord,
+                                                        ),
+                                                      ),
+                                                    );
                                                   },
                                                   text: 'Partner',
                                                   icon: Icon(

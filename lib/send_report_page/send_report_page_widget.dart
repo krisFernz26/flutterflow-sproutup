@@ -3,7 +3,6 @@ import '../backend/backend.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
-import '../main.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +11,10 @@ import 'package:google_fonts/google_fonts.dart';
 class SendReportPageWidget extends StatefulWidget {
   SendReportPageWidget({
     Key key,
-    this.startup,
+    this.id,
   }) : super(key: key);
 
-  final StartupsRecord startup;
+  final String id;
 
   @override
   _SendReportPageWidgetState createState() => _SendReportPageWidgetState();
@@ -118,7 +117,7 @@ class _SendReportPageWidgetState extends State<SendReportPageWidget> {
                   final dateSent = getCurrentTimestamp;
                   final dateInvestigated = getCurrentTimestamp;
                   final status = 'Pending';
-                  final startup = widget.startup.reference;
+                  final reportedId = widget.id;
 
                   final reportsRecordData = {
                     ...createReportsRecordData(
@@ -128,19 +127,13 @@ class _SendReportPageWidgetState extends State<SendReportPageWidget> {
                       dateSent: dateSent,
                       dateInvestigated: dateInvestigated,
                       status: status,
-                      startup: startup,
+                      reportedId: reportedId,
                     ),
                     'images': FieldValue.arrayUnion(['']),
                   };
 
                   await ReportsRecord.collection.doc().set(reportsRecordData);
-                  await Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NavBarPage(initialPage: 'HomePage'),
-                    ),
-                    (r) => false,
-                  );
+                  Navigator.pop(context);
                 },
                 text: 'Send',
                 options: FFButtonOptions(

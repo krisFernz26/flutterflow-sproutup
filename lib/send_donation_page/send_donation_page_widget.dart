@@ -40,7 +40,7 @@ class _SendDonationPageWidgetState extends State<SendDonationPageWidget> {
         iconTheme: IconThemeData(color: FlutterFlowTheme.tertiaryColor),
         automaticallyImplyLeading: true,
         title: AutoSizeText(
-          'Donate',
+          'Funding Request',
           style: FlutterFlowTheme.title1.override(
             fontFamily: 'Montserrat',
             color: FlutterFlowTheme.secondaryColor,
@@ -124,7 +124,7 @@ class _SendDonationPageWidgetState extends State<SendDonationPageWidget> {
               Padding(
                 padding: EdgeInsets.fromLTRB(10, 0, 10, 30),
                 child: Text(
-                  'SproutUp handles donations  as messages. Once you hit the send button, you\'ll be sending this message as your first message to this startup.',
+                  'SproutUp handles requests  as messages. Once you hit the send button, you\'ll be sending this message as your first message to this startup.',
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.bodyText2.override(
                     fontFamily: 'Montserrat',
@@ -174,7 +174,7 @@ class _SendDonationPageWidgetState extends State<SendDonationPageWidget> {
                     (r) => false,
                   );
                 },
-                text: 'Send',
+                text: 'Send Request',
                 options: FFButtonOptions(
                   width: 130,
                   height: 40,

@@ -19,16 +19,7 @@ class ExplorePageWidget extends StatefulWidget {
 }
 
 class _ExplorePageWidgetState extends State<ExplorePageWidget> {
-  TextEditingController textController1;
-  TextEditingController textController2;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    super.initState();
-    textController1 = TextEditingController();
-    textController2 = TextEditingController();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -102,58 +93,6 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                             Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(50, 10, 50, 0),
-                                  child: TextFormField(
-                                    controller: textController1,
-                                    obscureText: false,
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      labelText: 'Search',
-                                      labelStyle:
-                                          FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Montserrat',
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                      ),
-                                      hintText: 'Search...',
-                                      hintStyle:
-                                          FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Montserrat',
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.tertiaryColor,
-                                          width: 1,
-                                        ),
-                                        borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20),
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20),
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.tertiaryColor,
-                                          width: 1,
-                                        ),
-                                        borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20),
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20),
-                                        ),
-                                      ),
-                                      filled: true,
-                                      fillColor: Color(0x1BFFFFFF),
-                                    ),
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                  ),
-                                ),
                                 Padding(
                                   padding: EdgeInsets.fromLTRB(0, 20, 0, 5),
                                   child: FFButtonWidget(
@@ -484,58 +423,6 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                             Column(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(50, 10, 50, 5),
-                                  child: TextFormField(
-                                    controller: textController2,
-                                    obscureText: false,
-                                    decoration: InputDecoration(
-                                      isDense: true,
-                                      labelText: 'Search',
-                                      labelStyle:
-                                          FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Montserrat',
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                      ),
-                                      hintText: 'Search...',
-                                      hintStyle:
-                                          FlutterFlowTheme.bodyText1.override(
-                                        fontFamily: 'Montserrat',
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.tertiaryColor,
-                                          width: 1,
-                                        ),
-                                        borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20),
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20),
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: FlutterFlowTheme.tertiaryColor,
-                                          width: 1,
-                                        ),
-                                        borderRadius: BorderRadius.only(
-                                          bottomLeft: Radius.circular(20),
-                                          bottomRight: Radius.circular(20),
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20),
-                                        ),
-                                      ),
-                                      filled: true,
-                                      fillColor: Color(0x1BFFFFFF),
-                                    ),
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                  ),
-                                ),
                                 Expanded(
                                   child: StreamBuilder<List<StartupsRecord>>(
                                     stream: queryStartupsRecord(

@@ -5,6 +5,7 @@ import '../flutter_flow/flutter_flow_theme.dart';
 import '../flutter_flow/flutter_flow_util.dart';
 import '../flutter_flow/flutter_flow_widgets.dart';
 import '../main.dart';
+import '../send_report_page/send_report_page_widget.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -78,69 +79,6 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              StreamBuilder<UsersRecord>(
-                stream: UsersRecord.getDocument(widget.post.user),
-                builder: (context, snapshot) {
-                  // Customize what your widget looks like when it's loading.
-                  if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  final rowUsersRecord = snapshot.data;
-                  return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: Image.network(
-                              rowUsersRecord.photoUrl,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(0, 0, 2, 0),
-                          child: Text(
-                            rowUsersRecord.displayName,
-                            style: FlutterFlowTheme.bodyText1.override(
-                              fontFamily: 'Montserrat',
-                              color: FlutterFlowTheme.tertiaryColor,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          rowUsersRecord.lastName,
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Montserrat',
-                            color: FlutterFlowTheme.tertiaryColor,
-                            fontSize: 13,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            print('IconButton pressed ...');
-                          },
-                          icon: Icon(
-                            Icons.arrow_forward_ios,
-                            color: FlutterFlowTheme.tertiaryColor,
-                            size: 20,
-                          ),
-                          iconSize: 20,
-                        )
-                      ],
-                    ),
-                  );
-                },
-              ),
               Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
@@ -239,6 +177,58 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
                   },
                 ),
               ),
+              StreamBuilder<UsersRecord>(
+                stream: UsersRecord.getDocument(widget.post.user),
+                builder: (context, snapshot) {
+                  // Customize what your widget looks like when it's loading.
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  final rowUsersRecord = snapshot.data;
+                  return Padding(
+                    padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.network(
+                              rowUsersRecord.photoUrl,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 0, 2, 0),
+                          child: Text(
+                            rowUsersRecord.displayName,
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Montserrat',
+                              color: FlutterFlowTheme.tertiaryColor,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          rowUsersRecord.lastName,
+                          style: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Montserrat',
+                            color: FlutterFlowTheme.tertiaryColor,
+                            fontSize: 13,
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                },
+              ),
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                 child: Row(
@@ -278,8 +268,15 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
                       ),
                     ),
                     FFButtonWidget(
-                      onPressed: () {
-                        print('Button pressed ...');
+                      onPressed: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SendReportPageWidget(
+                              id: widget.post.title,
+                            ),
+                          ),
+                        );
                       },
                       text: 'Report',
                       options: FFButtonOptions(

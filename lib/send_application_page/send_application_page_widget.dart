@@ -41,7 +41,7 @@ class _SendApplicationPageWidgetState extends State<SendApplicationPageWidget> {
         iconTheme: IconThemeData(color: FlutterFlowTheme.tertiaryColor),
         automaticallyImplyLeading: true,
         title: AutoSizeText(
-          'Send Application',
+          'Application Request',
           style: FlutterFlowTheme.title1.override(
             fontFamily: 'Montserrat',
             color: FlutterFlowTheme.secondaryColor,
@@ -125,7 +125,7 @@ class _SendApplicationPageWidgetState extends State<SendApplicationPageWidget> {
               Padding(
                 padding: EdgeInsets.fromLTRB(10, 0, 10, 30),
                 child: Text(
-                  'SproutUp handles applications as messages. Once you hit the send button, you\'ll be sending this message as your first message to this startup.',
+                  'SproutUp handles requests as messages. Once you hit the send button, you\'ll be sending this message as your first message to this startup.',
                   textAlign: TextAlign.center,
                   style: FlutterFlowTheme.bodyText2.override(
                     fontFamily: 'Montserrat',

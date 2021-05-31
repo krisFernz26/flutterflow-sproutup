@@ -137,6 +137,59 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
                     },
                   ),
                 ),
+                StreamBuilder<UsersRecord>(
+                  stream:
+                      UsersRecord.getDocument(widget.startup.userRegisterer),
+                  builder: (context, snapshot) {
+                    // Customize what your widget looks like when it's loading.
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    final rowUsersRecord = snapshot.data;
+                    return Padding(
+                      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                              ),
+                              child: Image.network(
+                                rowUsersRecord.photoUrl,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 2, 0),
+                            child: Text(
+                              rowUsersRecord.displayName,
+                              style: FlutterFlowTheme.bodyText1.override(
+                                fontFamily: 'Montserrat',
+                                color: Color(0x91FFFFFF),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            rowUsersRecord.lastName,
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Montserrat',
+                              color: Color(0x91FFFFFF),
+                              fontSize: 13,
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                   child: Row(
@@ -182,7 +235,7 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => SendReportPageWidget(
-                                startup: widget.startup,
+                                id: widget.startup.name,
                               ),
                             ),
                           );
@@ -481,70 +534,6 @@ class _StartupInfoPageWidgetState extends State<StartupInfoPageWidget> {
                       color: FlutterFlowTheme.tertiaryColor,
                     ),
                   ),
-                ),
-                StreamBuilder<UsersRecord>(
-                  stream:
-                      UsersRecord.getDocument(widget.startup.userRegisterer),
-                  builder: (context, snapshot) {
-                    // Customize what your widget looks like when it's loading.
-                    if (!snapshot.hasData) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    final rowUsersRecord = snapshot.data;
-                    return Padding(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 6, 0),
-                            child: Container(
-                              width: 50,
-                              height: 50,
-                              clipBehavior: Clip.antiAlias,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                              ),
-                              child: Image.network(
-                                rowUsersRecord.photoUrl,
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(0, 0, 2, 0),
-                            child: Text(
-                              rowUsersRecord.displayName,
-                              style: FlutterFlowTheme.bodyText1.override(
-                                fontFamily: 'Montserrat',
-                                color: Color(0x91FFFFFF),
-                                fontSize: 13,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            rowUsersRecord.lastName,
-                            style: FlutterFlowTheme.bodyText1.override(
-                              fontFamily: 'Montserrat',
-                              color: Color(0x91FFFFFF),
-                              fontSize: 13,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              print('IconButton pressed ...');
-                            },
-                            icon: Icon(
-                              Icons.arrow_forward_ios,
-                              color: Color(0xBAFFFFFF),
-                              size: 20,
-                            ),
-                            iconSize: 20,
-                          )
-                        ],
-                      ),
-                    );
-                  },
                 ),
                 Padding(
                   padding: EdgeInsets.fromLTRB(0, 20, 0, 0),

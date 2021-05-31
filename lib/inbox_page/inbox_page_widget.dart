@@ -1,4 +1,3 @@
-import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import '../profile_page/profile_page_widget.dart';
@@ -15,16 +14,7 @@ class InboxPageWidget extends StatefulWidget {
 }
 
 class _InboxPageWidgetState extends State<InboxPageWidget> {
-  TextEditingController textController1;
-  TextEditingController textController2;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    super.initState();
-    textController1 = TextEditingController();
-    textController2 = TextEditingController();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,59 +88,10 @@ class _InboxPageWidgetState extends State<InboxPageWidget> {
                       Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(50, 10, 50, 5),
-                            child: TextFormField(
-                              controller: textController1,
-                              obscureText: false,
-                              decoration: InputDecoration(
-                                labelText: 'Search',
-                                labelStyle: FlutterFlowTheme.bodyText1.override(
-                                  fontFamily: 'Montserrat',
-                                  color: FlutterFlowTheme.tertiaryColor,
-                                ),
-                                hintText: 'Username, message, etc....',
-                                hintStyle: FlutterFlowTheme.bodyText1.override(
-                                  fontFamily: 'Montserrat',
-                                  color: FlutterFlowTheme.tertiaryColor,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: FlutterFlowTheme.tertiaryColor,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(100),
-                                    bottomRight: Radius.circular(100),
-                                    topLeft: Radius.circular(100),
-                                    topRight: Radius.circular(100),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: FlutterFlowTheme.tertiaryColor,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(100),
-                                    bottomRight: Radius.circular(100),
-                                    topLeft: Radius.circular(100),
-                                    topRight: Radius.circular(100),
-                                  ),
-                                ),
-                              ),
-                              style: FlutterFlowTheme.bodyText1.override(
-                                fontFamily: 'Montserrat',
-                                color: FlutterFlowTheme.tertiaryColor,
-                              ),
-                            ),
-                          ),
                           Expanded(
                             child: StreamBuilder<List<RoomsRecord>>(
                               stream: queryRoomsRecord(
                                 queryBuilder: (roomsRecord) => roomsRecord
-                                    .where('users',
-                                        arrayContains: currentUserReference)
                                     .orderBy('date_created', descending: true),
                               ),
                               builder: (context, snapshot) {
@@ -169,7 +110,7 @@ class _InboxPageWidgetState extends State<InboxPageWidget> {
                                       createDummyRoomsRecord(count: 4);
                                 }
                                 return Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                   child: ListView.builder(
                                     padding: EdgeInsets.zero,
                                     scrollDirection: Axis.vertical,
@@ -300,59 +241,10 @@ class _InboxPageWidgetState extends State<InboxPageWidget> {
                       Column(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(50, 10, 50, 5),
-                            child: TextFormField(
-                              controller: textController2,
-                              obscureText: false,
-                              decoration: InputDecoration(
-                                labelText: 'Search',
-                                labelStyle: FlutterFlowTheme.bodyText1.override(
-                                  fontFamily: 'Montserrat',
-                                  color: FlutterFlowTheme.tertiaryColor,
-                                ),
-                                hintText: 'Username, message, etc....',
-                                hintStyle: FlutterFlowTheme.bodyText1.override(
-                                  fontFamily: 'Montserrat',
-                                  color: FlutterFlowTheme.tertiaryColor,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: FlutterFlowTheme.tertiaryColor,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(100),
-                                    bottomRight: Radius.circular(100),
-                                    topLeft: Radius.circular(100),
-                                    topRight: Radius.circular(100),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: FlutterFlowTheme.tertiaryColor,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(100),
-                                    bottomRight: Radius.circular(100),
-                                    topLeft: Radius.circular(100),
-                                    topRight: Radius.circular(100),
-                                  ),
-                                ),
-                              ),
-                              style: FlutterFlowTheme.bodyText1.override(
-                                fontFamily: 'Montserrat',
-                                color: FlutterFlowTheme.tertiaryColor,
-                              ),
-                            ),
-                          ),
                           Expanded(
                             child: StreamBuilder<List<RoomsRecord>>(
                               stream: queryRoomsRecord(
                                 queryBuilder: (roomsRecord) => roomsRecord
-                                    .where('purpose',
-                                        isEqualTo: textController2.text)
                                     .orderBy('date_created', descending: true),
                               ),
                               builder: (context, snapshot) {
@@ -371,7 +263,7 @@ class _InboxPageWidgetState extends State<InboxPageWidget> {
                                       createDummyRoomsRecord(count: 4);
                                 }
                                 return Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
                                   child: ListView.builder(
                                     padding: EdgeInsets.zero,
                                     scrollDirection: Axis.vertical,

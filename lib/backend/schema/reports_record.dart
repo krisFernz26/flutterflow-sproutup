@@ -36,7 +36,8 @@ abstract class ReportsRecord
   String get status;
 
   @nullable
-  DocumentReference get startup;
+  @BuiltValueField(wireName: 'reported_id')
+  String get reportedId;
 
   @nullable
   @BuiltValueField(wireName: kDocumentReferenceField)
@@ -46,7 +47,8 @@ abstract class ReportsRecord
     ..images = ListBuilder()
     ..video = ''
     ..text = ''
-    ..status = '';
+    ..status = ''
+    ..reportedId = '';
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('reports');
@@ -67,7 +69,7 @@ Map<String, dynamic> createReportsRecordData({
   Timestamp dateSent,
   Timestamp dateInvestigated,
   String status,
-  DocumentReference startup,
+  String reportedId,
 }) =>
     serializers.serializeWith(
         ReportsRecord.serializer,
@@ -79,7 +81,7 @@ Map<String, dynamic> createReportsRecordData({
           ..dateSent = dateSent
           ..dateInvestigated = dateInvestigated
           ..status = status
-          ..startup = startup));
+          ..reportedId = reportedId));
 
 ReportsRecord get dummyReportsRecord {
   final builder = ReportsRecordBuilder()
@@ -88,7 +90,8 @@ ReportsRecord get dummyReportsRecord {
     ..text = dummyString
     ..dateSent = dummyTimestamp
     ..dateInvestigated = dummyTimestamp
-    ..status = dummyString;
+    ..status = dummyString
+    ..reportedId = dummyString;
   return builder.build();
 }
 

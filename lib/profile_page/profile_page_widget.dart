@@ -669,73 +669,42 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      StreamBuilder<List<StartupsRecord>>(
-                                        stream: queryStartupsRecord(
-                                          queryBuilder: (startupsRecord) =>
-                                              startupsRecord.where(
-                                                  'user_registerer',
-                                                  isEqualTo:
-                                                      currentUserReference),
-                                          singleRecord: true,
-                                        ),
-                                        builder: (context, snapshot) {
-                                          // Customize what your widget looks like when it's loading.
-                                          if (!snapshot.hasData) {
-                                            return Center(
-                                                child:
-                                                    CircularProgressIndicator());
-                                          }
-                                          List<StartupsRecord>
-                                              buttonStartupsRecordList =
-                                              snapshot.data;
-                                          // Customize what your widget looks like with no query results.
-                                          if (snapshot.data.isEmpty) {
-                                            // return Container();
-                                            // For now, we'll just include some dummy data.
-                                            buttonStartupsRecordList =
-                                                createDummyStartupsRecord(
-                                                    count: 1);
-                                          }
-                                          final buttonStartupsRecord =
-                                              buttonStartupsRecordList.first;
-                                          return Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                0, 0, 0, 20),
-                                            child: FFButtonWidget(
-                                              onPressed: () async {
-                                                await Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        SendReportPageWidget(
-                                                      startup:
-                                                          buttonStartupsRecord,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              text: 'Send Feedback',
-                                              options: FFButtonOptions(
-                                                width: 180,
-                                                height: 40,
-                                                color: Color(0xFFFF0003),
-                                                textStyle: FlutterFlowTheme
-                                                    .title3
-                                                    .override(
-                                                  fontFamily: 'Montserrat',
-                                                  color: FlutterFlowTheme
-                                                      .tertiaryColor,
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 20),
+                                        child: FFButtonWidget(
+                                          onPressed: () async {
+                                            await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SendReportPageWidget(
+                                                  id: profilePageUsersRecord
+                                                      .email,
                                                 ),
-                                                elevation: 4,
-                                                borderSide: BorderSide(
-                                                  color: Colors.transparent,
-                                                  width: 1,
-                                                ),
-                                                borderRadius: 120,
                                               ),
+                                            );
+                                          },
+                                          text: 'Send Feedback',
+                                          options: FFButtonOptions(
+                                            width: 180,
+                                            height: 40,
+                                            color: Color(0x00FF0003),
+                                            textStyle: FlutterFlowTheme.title3
+                                                .override(
+                                              fontFamily: 'Montserrat',
+                                              color: FlutterFlowTheme
+                                                  .tertiaryColor,
                                             ),
-                                          );
-                                        },
+                                            elevation: 0,
+                                            borderSide: BorderSide(
+                                              color: FlutterFlowTheme
+                                                  .tertiaryColor,
+                                              width: 1,
+                                            ),
+                                            borderRadius: 120,
+                                          ),
+                                        ),
                                       )
                                     ],
                                   ),

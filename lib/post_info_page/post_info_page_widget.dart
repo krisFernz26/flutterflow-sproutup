@@ -1,3 +1,5 @@
+import 'package:sprout_up/auth/firebase_user_provider.dart';
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../edit_post_page/edit_post_page_widget.dart';
@@ -11,6 +13,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:intl/intl.dart';
 
 class PostInfoPageWidget extends StatefulWidget {
   PostInfoPageWidget({
@@ -79,108 +83,9 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10, 0, 5),
-                    child: Text(
-                      'Posted on',
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: Color(0x80FFFFFF),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(5, 10, 0, 5),
-                    child: AutoSizeText(
-                      widget.post.datePosted.toString(),
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: Color(0x71FFFFFF),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-              Container(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.4,
-                decoration: BoxDecoration(
-                  color: Color(0xFFEEEEEE),
-                ),
-                child: Builder(
-                  builder: (context) {
-                    final images = widget.post.images?.toList() ?? [];
-                    return Container(
-                      width: double.infinity,
-                      height: 500,
-                      child: Stack(
-                        children: [
-                          PageView.builder(
-                            controller: pageViewController,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: images.length,
-                            itemBuilder: (context, imagesIndex) {
-                              final imagesItem = images[imagesIndex];
-                              return Container(
-                                width: 100,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.primaryColor,
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 1, 0, 0),
-                                  child: Image.network(
-                                    imagesItem,
-                                    width: 100,
-                                    height: 100,
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          Align(
-                            alignment: Alignment(0, 1),
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                              child: SmoothPageIndicator(
-                                controller: pageViewController,
-                                count: images.length,
-                                axisDirection: Axis.horizontal,
-                                onDotClicked: (i) {
-                                  pageViewController.animateToPage(
-                                    i,
-                                    duration: Duration(milliseconds: 500),
-                                    curve: Curves.ease,
-                                  );
-                                },
-                                effect: ExpandingDotsEffect(
-                                  expansionFactor: 2,
-                                  spacing: 8,
-                                  radius: 16,
-                                  dotWidth: 16,
-                                  dotHeight: 16,
-                                  dotColor: Color(0x76FFFFFF),
-                                  activeDotColor:
-                                      FlutterFlowTheme.tertiaryColor,
-                                  paintStyle: PaintingStyle.fill,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
               StreamBuilder<UsersRecord>(
                 stream: UsersRecord.getDocument(widget.post.user),
                 builder: (context, snapshot) {
-                  // Customize what your widget looks like when it's loading.
                   if (!snapshot.hasData) {
                     return Center(child: CircularProgressIndicator());
                   }
@@ -201,14 +106,14 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
                             ),
                             child: Image.network(
                               rowUsersRecord.photoUrl,
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                             ),
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.fromLTRB(0, 0, 2, 0),
                           child: Text(
-                            rowUsersRecord.displayName,
+                            '${rowUsersRecord.displayName} ${rowUsersRecord.lastName}',
                             style: FlutterFlowTheme.bodyText1.override(
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
@@ -216,24 +121,129 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
                             ),
                           ),
                         ),
-                        Text(
-                          rowUsersRecord.lastName,
-                          style: FlutterFlowTheme.bodyText1.override(
-                            fontFamily: 'Montserrat',
-                            color: FlutterFlowTheme.tertiaryColor,
-                            fontSize: 13,
-                          ),
-                        )
                       ],
                     ),
                   );
                 },
               ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 10, 0, 5),
+                    child: Text(
+                      'Posted',
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Montserrat',
+                        color: Color(0x80FFFFFF),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(5, 10, 0, 5),
+                    child: AutoSizeText(
+                      timeago.format(widget.post.datePosted.toDate()),
+                      style: FlutterFlowTheme.bodyText1.override(
+                        fontFamily: 'Montserrat',
+                        color: Color(0x71FFFFFF),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              widget.post.images.isEmpty
+                  ? Container()
+                  : Container(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFEEEEEE),
+                      ),
+                      child: Builder(
+                        builder: (context) {
+                          final images = widget.post.images?.toList() ?? [];
+                          return Container(
+                            width: double.infinity,
+                            height: 500,
+                            child: Stack(
+                              children: [
+                                PageView.builder(
+                                  controller: pageViewController,
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: images.length,
+                                  itemBuilder: (context, imagesIndex) {
+                                    final imagesItem = images[imagesIndex];
+                                    return Container(
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.primaryColor,
+                                      ),
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 1, 0, 0),
+                                        child: Image.network(
+                                          imagesItem,
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                Align(
+                                  alignment: Alignment(0, 1),
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                                    child: SmoothPageIndicator(
+                                      controller: pageViewController,
+                                      count: images.length,
+                                      axisDirection: Axis.horizontal,
+                                      onDotClicked: (i) {
+                                        pageViewController.animateToPage(
+                                          i,
+                                          duration: Duration(milliseconds: 500),
+                                          curve: Curves.ease,
+                                        );
+                                      },
+                                      effect: ExpandingDotsEffect(
+                                        expansionFactor: 2,
+                                        spacing: 8,
+                                        radius: 16,
+                                        dotWidth: 16,
+                                        dotHeight: 16,
+                                        dotColor: Colors.black.withOpacity(0.2),
+                                        activeDotColor:
+                                            Colors.black.withOpacity(0.8),
+                                        paintStyle: PaintingStyle.fill,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 10, 0, 0),
+                child: AutoSizeText(
+                  widget.post.body,
+                  style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Montserrat',
+                    color: FlutterFlowTheme.tertiaryColor,
+                  ),
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: widget.post.user == currentUserReference
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.center,
                   children: [
                     AutoSizeText(
                       widget.post.likesCount.toString(),
@@ -244,107 +254,141 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
                     ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 0, 20, 0),
-                      child: IconButton(
-                        onPressed: () async {
-                          final postsRecordData = {
-                            'likes_count': FieldValue.increment(1),
-                            'liked_users':
-                                FieldValue.arrayUnion([currentUserReference]),
-                          };
+                      child: widget.post.user == currentUserReference
+                          ? IconButton(
+                              onPressed: () async {
+                                await widget.post.reference.delete();
+                              },
+                              icon: Icon(
+                                Icons.delete_forever,
+                                color: FlutterFlowTheme.tertiaryColor,
+                                size: 30,
+                              ),
+                              iconSize: 30,
+                            )
+                          : IconButton(
+                              onPressed: widget.post.user ==
+                                      currentUserReference
+                                  ? null
+                                  : () async {
+                                      final postsRecordData = !widget
+                                              .post.likedUsers
+                                              .contains(currentUserReference)
+                                          ? {
+                                              'likes_count':
+                                                  FieldValue.increment(1),
+                                              'liked_users':
+                                                  FieldValue.arrayUnion(
+                                                      [currentUserReference]),
+                                            }
+                                          : {
+                                              'likes_count':
+                                                  FieldValue.increment(-1),
+                                              'liked_users':
+                                                  FieldValue.arrayRemove(
+                                                      [currentUserReference]),
+                                            };
 
-                          await widget.post.reference.update(postsRecordData);
-                          final usersRecordData = {
-                            'likes_count': FieldValue.increment(1),
-                          };
+                                      await widget.post.reference
+                                          .update(postsRecordData);
+                                      final usersRecordData = !widget
+                                              .post.likedUsers
+                                              .contains(currentUserReference)
+                                          ? {
+                                              'likes_count':
+                                                  FieldValue.increment(1),
+                                            }
+                                          : {
+                                              'likes_count':
+                                                  FieldValue.increment(-1),
+                                            };
 
-                          await currentUserReference.update(usersRecordData);
-                        },
-                        icon: Icon(
-                          Icons.thumb_up_off_alt,
-                          color: FlutterFlowTheme.tertiaryColor,
-                          size: 30,
-                        ),
-                        iconSize: 30,
-                      ),
-                    ),
-                    FFButtonWidget(
-                      onPressed: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SendReportPageWidget(
-                              id: widget.post.title,
+                                      await currentUserReference
+                                          .update(usersRecordData);
+                                    },
+                              icon: Icon(
+                                !widget.post.likedUsers
+                                            .contains(currentUserReference)
+                                    ? Icons.thumb_up_off_alt
+                                    : Icons.thumb_up,
+                                color: FlutterFlowTheme.tertiaryColor,
+                                size: 30,
+                              ),
+                              iconSize: 30,
                             ),
-                          ),
-                        );
-                      },
-                      text: 'Report',
-                      options: FFButtonOptions(
-                        width: 130,
-                        height: 40,
-                        color: FlutterFlowTheme.secondaryColor,
-                        textStyle: FlutterFlowTheme.subtitle2.override(
-                          fontFamily: 'Montserrat',
-                          color: FlutterFlowTheme.primaryColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                          width: 1,
-                        ),
-                        borderRadius: 120,
-                      ),
-                    )
+                    ),
+                    widget.post.user == currentUserReference
+                        ? Container()
+                        : FFButtonWidget(
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SendReportPageWidget(
+                                    id: widget.post.title,
+                                  ),
+                                ),
+                              );
+                            },
+                            text: 'Report',
+                            options: FFButtonOptions(
+                              width: 130,
+                              height: 40,
+                              color: FlutterFlowTheme.secondaryColor,
+                              textStyle: FlutterFlowTheme.subtitle2.override(
+                                fontFamily: 'Montserrat',
+                                color: FlutterFlowTheme.primaryColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                                width: 1,
+                              ),
+                              borderRadius: 120,
+                            ),
+                          )
                   ],
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20, 15, 0, 0),
-                child: AutoSizeText(
-                  widget.post.body,
-                  style: FlutterFlowTheme.bodyText1.override(
-                    fontFamily: 'Montserrat',
-                    color: FlutterFlowTheme.tertiaryColor,
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
-                    child: FFButtonWidget(
-                      onPressed: () async {
-                        await widget.post.reference.delete();
-                        await Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                NavBarPage(initialPage: 'ExplorePage'),
+              widget.post.user.id != currentUserReference.id
+                  ? Container()
+                  : Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                          child: FFButtonWidget(
+                            onPressed: () async {
+                              await widget.post.reference.delete();
+                              await Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      NavBarPage(initialPage: 'ExplorePage'),
+                                ),
+                                (r) => false,
+                              );
+                            },
+                            text: 'Delete Post',
+                            options: FFButtonOptions(
+                              width: 130,
+                              height: 40,
+                              color: FlutterFlowTheme.tertiaryColor,
+                              textStyle: FlutterFlowTheme.subtitle2.override(
+                                fontFamily: 'Montserrat',
+                                color: FlutterFlowTheme.primaryColor,
+                              ),
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                                width: 1,
+                              ),
+                              borderRadius: 12,
+                            ),
                           ),
-                          (r) => false,
-                        );
-                      },
-                      text: 'Delete Post',
-                      options: FFButtonOptions(
-                        width: 130,
-                        height: 40,
-                        color: FlutterFlowTheme.tertiaryColor,
-                        textStyle: FlutterFlowTheme.subtitle2.override(
-                          fontFamily: 'Montserrat',
-                          color: FlutterFlowTheme.primaryColor,
-                        ),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                          width: 1,
-                        ),
-                        borderRadius: 12,
-                      ),
-                    ),
-                  )
-                ],
-              )
+                        )
+                      ],
+                    )
             ],
           ),
         ),

@@ -1,3 +1,5 @@
+import 'package:sprout_up/create_startup_page/create_startup_page_widget.dart';
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../backend/firebase_storage/storage.dart';
@@ -15,6 +17,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:intl/intl.dart';
 
 class SproutPageWidget extends StatefulWidget {
   SproutPageWidget({Key key}) : super(key: key);
@@ -44,16 +48,64 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
         singleRecord: true,
       ),
       builder: (context, snapshot) {
-        // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
+
         List<StartupsRecord> sproutPageStartupsRecordList = snapshot.data;
-        // Customize what your widget looks like with no query results.
+
         if (snapshot.data.isEmpty) {
-          // return Container();
-          // For now, we'll just include some dummy data.
-          sproutPageStartupsRecordList = createDummyStartupsRecord(count: 1);
+          return Scaffold(
+            key: scaffoldKey,
+            appBar: AppBar(
+              centerTitle: true,
+              elevation: 0,
+              backgroundColor: FlutterFlowTheme.primaryColor,
+              automaticallyImplyLeading: false,
+              title: Text(
+                'Sprout',
+                style: FlutterFlowTheme.title1.override(
+                  fontFamily: 'Montserrat',
+                  color: FlutterFlowTheme.secondaryColor,
+                ),
+              ),
+            ),
+            body: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: FlutterFlowTheme.primaryColor,
+              ),
+              child: Center(
+                child: FFButtonWidget(
+                  text: 'Register Startup',
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CreateStartupPageWidget(),
+                      ),
+                    );
+                  },
+                  options: FFButtonOptions(
+                    width: 180,
+                    height: 40,
+                    color: Color(0x00FF0003),
+                    textStyle: FlutterFlowTheme.title3.override(
+                      fontFamily: 'Montserrat',
+                      color: FlutterFlowTheme.tertiaryColor,
+                    ),
+                    elevation: 0,
+                    borderSide: BorderSide(
+                      color: FlutterFlowTheme.tertiaryColor,
+                      width: 1,
+                    ),
+                    borderRadius: 120,
+                  ),
+                ),
+              ),
+            ),
+          );
         }
         final sproutPageStartupsRecord = sproutPageStartupsRecordList.first;
         return Scaffold(
@@ -98,7 +150,7 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                 color: FlutterFlowTheme.primaryColor,
               ),
               child: DefaultTabController(
-                length: 4,
+                length: 3,
                 initialIndex: 0,
                 child: Column(
                   children: [
@@ -119,12 +171,6 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                           ),
                         ),
                         Tab(
-                          text: 'Requests',
-                          icon: Icon(
-                            Icons.request_page,
-                          ),
-                        ),
-                        Tab(
                           text: 'TRL',
                           icon: Icon(
                             Icons.biotech_sharp,
@@ -135,307 +181,7 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 5, 0, 5),
-                                        child: Container(
-                                          width: 120,
-                                          height: 120,
-                                          clipBehavior: Clip.antiAlias,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Image.network(
-                                            sproutPageStartupsRecord.logo,
-                                            fit: BoxFit.fill,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(6, 0, 0, 0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 2),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Text(
-                                                    sproutPageStartupsRecord
-                                                        .followerCount
-                                                        .toString(),
-                                                    style: FlutterFlowTheme
-                                                        .bodyText1
-                                                        .override(
-                                                      fontFamily: 'Montserrat',
-                                                      color: FlutterFlowTheme
-                                                          .tertiaryColor,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            2, 0, 0, 0),
-                                                    child: Text(
-                                                      'Followers',
-                                                      style: FlutterFlowTheme
-                                                          .bodyText1
-                                                          .override(
-                                                        fontFamily:
-                                                            'Montserrat',
-                                                        color: FlutterFlowTheme
-                                                            .tertiaryColor,
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 2),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Text(
-                                                    sproutPageStartupsRecord
-                                                        .applicantCount
-                                                        .toString(),
-                                                    style: FlutterFlowTheme
-                                                        .bodyText1
-                                                        .override(
-                                                      fontFamily: 'Montserrat',
-                                                      color: FlutterFlowTheme
-                                                          .tertiaryColor,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            2, 0, 0, 0),
-                                                    child: Text(
-                                                      'Applicants',
-                                                      style: FlutterFlowTheme
-                                                          .bodyText1
-                                                          .override(
-                                                        fontFamily:
-                                                            'Montserrat',
-                                                        color: FlutterFlowTheme
-                                                            .tertiaryColor,
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Text(
-                                                  sproutPageStartupsRecord
-                                                      .investorCount
-                                                      .toString(),
-                                                  style: FlutterFlowTheme
-                                                      .bodyText1
-                                                      .override(
-                                                    fontFamily: 'Montserrat',
-                                                    color: FlutterFlowTheme
-                                                        .secondaryColor,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      2, 0, 0, 0),
-                                                  child: Text(
-                                                    'Backers',
-                                                    style: FlutterFlowTheme
-                                                        .bodyText1
-                                                        .override(
-                                                      fontFamily: 'Montserrat',
-                                                      color: FlutterFlowTheme
-                                                          .tertiaryColor,
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  0, 5, 0, 0),
-                                              child: Text(
-                                                sproutPageStartupsRecord.motto,
-                                                style: FlutterFlowTheme
-                                                    .bodyText1
-                                                    .override(
-                                                  fontFamily: 'Montserrat',
-                                                  color: FlutterFlowTheme
-                                                      .tertiaryColor,
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  width: double.infinity,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.4,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFEEEEEE),
-                                  ),
-                                  child: Builder(
-                                    builder: (context) {
-                                      final images = sproutPageStartupsRecord
-                                              .images
-                                              ?.toList() ??
-                                          [];
-                                      return Container(
-                                        width: double.infinity,
-                                        height: 500,
-                                        child: Stack(
-                                          children: [
-                                            PageView.builder(
-                                              controller: pageViewController,
-                                              scrollDirection: Axis.horizontal,
-                                              itemCount: images.length,
-                                              itemBuilder:
-                                                  (context, imagesIndex) {
-                                                final imagesItem =
-                                                    images[imagesIndex];
-                                                return Container(
-                                                  width: 100,
-                                                  height: 100,
-                                                  decoration: BoxDecoration(
-                                                    color: FlutterFlowTheme
-                                                        .primaryColor,
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            0, 1, 0, 0),
-                                                    child: Image.network(
-                                                      imagesItem,
-                                                      width: 100,
-                                                      height: 100,
-                                                      fit: BoxFit.contain,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                            Align(
-                                              alignment: Alignment(0, 1),
-                                              child: Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 10),
-                                                child: SmoothPageIndicator(
-                                                  controller:
-                                                      pageViewController,
-                                                  count: images.length,
-                                                  axisDirection:
-                                                      Axis.horizontal,
-                                                  onDotClicked: (i) {
-                                                    pageViewController
-                                                        .animateToPage(
-                                                      i,
-                                                      duration: Duration(
-                                                          milliseconds: 500),
-                                                      curve: Curves.ease,
-                                                    );
-                                                  },
-                                                  effect: ExpandingDotsEffect(
-                                                    expansionFactor: 2,
-                                                    spacing: 8,
-                                                    radius: 16,
-                                                    dotWidth: 16,
-                                                    dotHeight: 16,
-                                                    dotColor: Color(0x76FFFFFF),
-                                                    activeDotColor:
-                                                        FlutterFlowTheme
-                                                            .tertiaryColor,
-                                                    paintStyle:
-                                                        PaintingStyle.fill,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(20, 20, 0, 0),
-                                  child: Text(
-                                    sproutPageStartupsRecord.description,
-                                    style: FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 50),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      FFButtonWidget(
-                                        onPressed: () async {
-                                          await sproutPageStartupsRecord
-                                              .reference
-                                              .delete();
-                                          await Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => NavBarPage(
-                                                  initialPage: 'HomePage'),
-                                            ),
-                                            (r) => false,
-                                          );
-                                        },
-                                        text: 'Delete Sprout',
-                                        options: FFButtonOptions(
-                                          width: 130,
-                                          height: 40,
-                                          color: Color(0xFFFF0003),
-                                          textStyle: FlutterFlowTheme.subtitle2
-                                              .override(
-                                            fontFamily: 'Montserrat',
-                                            color: Colors.white,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color: Colors.transparent,
-                                            width: 1,
-                                          ),
-                                          borderRadius: 120,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
+                          StartupInfoTabWidget(sproutPageStartupsRecord: sproutPageStartupsRecord, pageViewController: pageViewController),
                           SingleChildScrollView(
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -502,20 +248,24 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                  child: FlutterFlowVideoPlayer(
-                                    path:
-                                        'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',
-                                    videoType: VideoType.network,
-                                    width: MediaQuery.of(context).size.width,
-                                    autoPlay: false,
-                                    looping: false,
-                                    showControls: true,
-                                    allowFullScreen: true,
-                                    allowPlaybackSpeedMenu: true,
-                                  ),
-                                ),
+                                sproutPageStartupsRecord.videoUrl == ''
+                                    ? Container()
+                                    : Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        child: FlutterFlowVideoPlayer(
+                                          path:
+                                              sproutPageStartupsRecord.videoUrl,
+                                          videoType: VideoType.network,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          autoPlay: false,
+                                          looping: false,
+                                          showControls: true,
+                                          allowFullScreen: true,
+                                          allowPlaybackSpeedMenu: true,
+                                        ),
+                                      ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -617,213 +367,6 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                               ],
                             ),
                           ),
-                          Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(50, 10, 50, 5),
-                                child: TextFormField(
-                                  controller: textController,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    labelText: 'Search',
-                                    labelStyle:
-                                        FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                    hintText: 'Username, message, etc....',
-                                    hintStyle:
-                                        FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(100),
-                                        bottomRight: Radius.circular(100),
-                                        topLeft: Radius.circular(100),
-                                        topRight: Radius.circular(100),
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(100),
-                                        bottomRight: Radius.circular(100),
-                                        topLeft: Radius.circular(100),
-                                        topRight: Radius.circular(100),
-                                      ),
-                                    ),
-                                  ),
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Montserrat',
-                                    color: FlutterFlowTheme.tertiaryColor,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: StreamBuilder<List<RoomsRecord>>(
-                                  stream: queryRoomsRecord(
-                                    queryBuilder: (roomsRecord) => roomsRecord
-                                        .where('startups',
-                                            arrayContains:
-                                                sproutPageStartupsRecord
-                                                    .reference)
-                                        .where('purpose',
-                                            isEqualTo: textController.text)
-                                        .where('users',
-                                            arrayContains: currentUserReference)
-                                        .orderBy('date_created',
-                                            descending: true),
-                                  ),
-                                  builder: (context, snapshot) {
-                                    // Customize what your widget looks like when it's loading.
-                                    if (!snapshot.hasData) {
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    }
-                                    List<RoomsRecord> listViewRoomsRecordList =
-                                        snapshot.data;
-                                    // Customize what your widget looks like with no query results.
-                                    if (snapshot.data.isEmpty) {
-                                      // return Container();
-                                      // For now, we'll just include some dummy data.
-                                      listViewRoomsRecordList =
-                                          createDummyRoomsRecord(count: 4);
-                                    }
-                                    return Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      child: ListView.builder(
-                                        padding: EdgeInsets.zero,
-                                        scrollDirection: Axis.vertical,
-                                        itemCount:
-                                            listViewRoomsRecordList.length,
-                                        itemBuilder: (context, listViewIndex) {
-                                          final listViewRoomsRecord =
-                                              listViewRoomsRecordList[
-                                                  listViewIndex];
-                                          return Padding(
-                                            padding: EdgeInsets.fromLTRB(
-                                                0, 0, 0, 10),
-                                            child: Container(
-                                              width: 100,
-                                              height: 100,
-                                              decoration: BoxDecoration(
-                                                color: Color(0x3D000000),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    10, 0, 10, 0),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    Container(
-                                                      width: 80,
-                                                      height: 80,
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                      ),
-                                                      child: Image.network(
-                                                        'https://picsum.photos/seed/769/600',
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.fromLTRB(
-                                                                6, 0, 0, 0),
-                                                        child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.max,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceEvenly,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              children: [],
-                                                            ),
-                                                            Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              children: [],
-                                                            ),
-                                                            Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              children: [],
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
-                                                      children: [
-                                                        IconButton(
-                                                          onPressed: () async {
-                                                            await Navigator
-                                                                .push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        RoomPageWidget(
-                                                                  room:
-                                                                      listViewRoomsRecord,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
-                                                          icon: Icon(
-                                                            Icons
-                                                                .arrow_forward_ios,
-                                                            color: FlutterFlowTheme
-                                                                .secondaryColor,
-                                                            size: 30,
-                                                          ),
-                                                          iconSize: 30,
-                                                        )
-                                                      ],
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            ],
-                          ),
                           SingleChildScrollView(
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -890,36 +433,125 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                                     ],
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(70, 20, 70, 0),
-                                  child: FFButtonWidget(
-                                    onPressed: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => TRLPageWidget(
-                                            startup: sproutPageStartupsRecord,
+                                StreamBuilder<List<TrlProgressRecord>>(
+                                  stream: queryTrlProgressRecord(
+                                    queryBuilder: (trlProgressRecord) =>
+                                        trlProgressRecord.where('startup',
+                                            isEqualTo: sproutPageStartupsRecord
+                                                .reference),
+                                    singleRecord: true,
+                                  ),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData) {
+                                      return Center(
+                                          child: CircularProgressIndicator());
+                                    }
+                                    List<TrlProgressRecord>
+                                        buttonTrlProgressRecordList =
+                                        snapshot.data;
+
+                                    if (snapshot.data.isEmpty) {
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(70, 20, 70, 0),
+                                        child: FFButtonWidget(
+                                          onPressed: () async {
+                                            final trlProgressRecordData = {
+                                              ...createTrlProgressRecordData(
+                                                dateUpdated:
+                                                    getCurrentTimestamp,
+                                                level: 0,
+                                                levelEightProgress: 0,
+                                                levelFiveProgress: 0,
+                                                levelFourProgress: 0,
+                                                levelNineProgress: 0,
+                                                levelOneProgress: 0,
+                                                levelSevenProgress: 0,
+                                                levelSixProgress: 0,
+                                                levelThreeProgress: 0,
+                                                levelTwoProgress: 0,
+                                                startup:
+                                                    sproutPageStartupsRecord
+                                                        .reference,
+                                              )
+                                            };
+
+                                            await TrlProgressRecord.collection
+                                                .doc()
+                                                .set(trlProgressRecordData);
+                                                
+                                            await Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    TRLPageWidget(
+                                                  startup:
+                                                      sproutPageStartupsRecord,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          text: 'Register TRL Progress',
+                                          options: FFButtonOptions(
+                                            width: double.infinity,
+                                            height: 40,
+                                            color:
+                                                FlutterFlowTheme.secondaryColor,
+                                            textStyle: FlutterFlowTheme
+                                                .subtitle2
+                                                .override(
+                                              fontFamily: 'Montserrat',
+                                              color:
+                                                  FlutterFlowTheme.primaryColor,
+                                            ),
+                                            borderSide: BorderSide(
+                                              color: Colors.transparent,
+                                              width: 1,
+                                            ),
+                                            borderRadius: 120,
                                           ),
                                         ),
                                       );
-                                    },
-                                    text: 'Open TRL Form',
-                                    options: FFButtonOptions(
-                                      width: double.infinity,
-                                      height: 40,
-                                      color: FlutterFlowTheme.secondaryColor,
-                                      textStyle:
-                                          FlutterFlowTheme.subtitle2.override(
-                                        fontFamily: 'Montserrat',
-                                        color: FlutterFlowTheme.primaryColor,
+                                    }
+                                    final buttonTrlProgressRecord =
+                                        buttonTrlProgressRecordList.first;
+                                    return Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(70, 20, 70, 0),
+                                      child: FFButtonWidget(
+                                        onPressed: () async {
+                                          await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TRLPageWidget(
+                                                startup:
+                                                    sproutPageStartupsRecord,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        text: 'Open TRL Form',
+                                        options: FFButtonOptions(
+                                          width: double.infinity,
+                                          height: 40,
+                                          color:
+                                              FlutterFlowTheme.secondaryColor,
+                                          textStyle: FlutterFlowTheme.subtitle2
+                                              .override(
+                                            fontFamily: 'Montserrat',
+                                            color:
+                                                FlutterFlowTheme.primaryColor,
+                                          ),
+                                          borderSide: BorderSide(
+                                            color: Colors.transparent,
+                                            width: 1,
+                                          ),
+                                          borderRadius: 120,
+                                        ),
                                       ),
-                                      borderSide: BorderSide(
-                                        color: Colors.transparent,
-                                        width: 1,
-                                      ),
-                                      borderRadius: 120,
-                                    ),
-                                  ),
+                                    );
+                                  },
                                 ),
                                 Padding(
                                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -950,6 +582,313 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
           ),
         );
       },
+    );
+  }
+}
+
+class StartupInfoTabWidget extends StatelessWidget {
+  const StartupInfoTabWidget({
+    Key key,
+    @required this.sproutPageStartupsRecord,
+    @required this.pageViewController,
+  }) : super(key: key);
+
+  final StartupsRecord sproutPageStartupsRecord;
+  final PageController pageViewController;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding:
+                      EdgeInsets.fromLTRB(0, 5, 0, 5),
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                    ),
+                    child: Image.network(
+                      sproutPageStartupsRecord.logo,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding:
+                      EdgeInsets.fromLTRB(6, 0, 0, 0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            0, 0, 0, 5),
+                        child: AutoSizeText(
+                          'Registered ${timeago.format(sproutPageStartupsRecord.dateRegistered.toDate())}',
+                          style: FlutterFlowTheme
+                              .bodyText1
+                              .override(
+                            fontFamily: 'Montserrat',
+                            color: Color(0x71FFFFFF),
+                            fontSize: 12
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            0, 0, 0, 2),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              '${NumberFormat.compact().format(
+                                  sproutPageStartupsRecord
+                                      .followerCount)} Followers',
+                              style: FlutterFlowTheme
+                                  .bodyText1
+                                  .override(
+                                fontFamily: 'Montserrat',
+                                color: FlutterFlowTheme
+                                    .tertiaryColor,
+                                  fontSize: 13
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(
+                            0, 0, 0, 2),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              '${NumberFormat.compact().format(
+                                  sproutPageStartupsRecord
+                                      .applicantCount)} Applicants',
+                              style: FlutterFlowTheme
+                                  .bodyText1
+                                  .override(
+                                fontFamily: 'Montserrat',
+                                color: FlutterFlowTheme
+                                    .tertiaryColor,
+                                  fontSize: 13
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(
+                            '${NumberFormat.compact().format(
+                                sproutPageStartupsRecord
+                                    .investorCount)} Backers',
+                            style: FlutterFlowTheme
+                                .bodyText1
+                                .override(
+                              fontFamily: 'Montserrat',
+                              color: FlutterFlowTheme
+                                  .secondaryColor,
+                                  fontSize: 13
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5.0),
+                            child: Text(
+                              'Looking For: ${
+                                  sproutPageStartupsRecord
+                                      .lookingFor}',
+                              style: FlutterFlowTheme
+                                  .bodyText1
+                                  .override(
+                                fontFamily: 'Montserrat',
+                                color: FlutterFlowTheme
+                                    .secondaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          sproutPageStartupsRecord.images.isEmpty ? Container() : Container(
+            width: double.infinity,
+            height:
+                MediaQuery.of(context).size.height * 0.4,
+            decoration: BoxDecoration(
+              color: Color(0xFFEEEEEE),
+            ),
+            child: Builder(
+              builder: (context) {
+                final images = sproutPageStartupsRecord
+                        .images
+                        ?.toList() ??
+                    [];
+                return Container(
+                  width: double.infinity,
+                  height: 500,
+                  child: Stack(
+                    children: [
+                      PageView.builder(
+                        controller: pageViewController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: images.length,
+                        itemBuilder:
+                            (context, imagesIndex) {
+                          final imagesItem =
+                              images[imagesIndex];
+                          return Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: FlutterFlowTheme
+                                  .primaryColor,
+                            ),
+                            child: Padding(
+                              padding:
+                                  EdgeInsets.fromLTRB(
+                                      0, 1, 0, 0),
+                              child: Image.network(
+                                imagesItem,
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      Align(
+                        alignment: Alignment(0, 1),
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(
+                              0, 0, 0, 10),
+                          child: SmoothPageIndicator(
+                            controller:
+                                pageViewController,
+                            count: images.length,
+                            axisDirection:
+                                Axis.horizontal,
+                            onDotClicked: (i) {
+                              pageViewController
+                                  .animateToPage(
+                                i,
+                                duration: Duration(
+                                    milliseconds: 500),
+                                curve: Curves.ease,
+                              );
+                            },
+                            effect: ExpandingDotsEffect(
+                              expansionFactor: 2,
+                              spacing: 8,
+                              radius: 16,
+                              dotWidth: 16,
+                              dotHeight: 16,
+                              dotColor: Colors.black.withOpacity(0.2),
+                              activeDotColor: Colors.black.withOpacity(0.7),
+                              paintStyle:
+                                  PaintingStyle.fill,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+                padding: EdgeInsets.fromLTRB(
+                    20, 20, 0, 0),
+            child: Text(
+              sproutPageStartupsRecord.motto,
+              style: FlutterFlowTheme
+                  .bodyText1
+                  .override(
+                fontFamily: 'Montserrat',
+                color: FlutterFlowTheme
+                    .tertiaryColor,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 20, 0, 0),
+            child: Text(
+              sproutPageStartupsRecord.description,
+              style: FlutterFlowTheme.bodyText1.override(
+                fontFamily: 'Montserrat',
+                color: FlutterFlowTheme.tertiaryColor,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 50),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FFButtonWidget(
+                  onPressed: () async {
+                    await sproutPageStartupsRecord
+                        .reference
+                        .delete();
+                    await Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NavBarPage(
+                            initialPage: 'HomePage'),
+                      ),
+                      (r) => false,
+                    );
+                  },
+                  text: 'Delete Sprout',
+                  options: FFButtonOptions(
+                    elevation: 0,
+                    width: 130,
+                    height: 40,
+                    color: Colors.transparent,
+                    textStyle: FlutterFlowTheme.subtitle2
+                        .override(
+                      fontFamily: 'Montserrat',
+                      color: Colors.white,
+                    ),
+                    borderSide: BorderSide(
+                      color: Colors.white,
+                      width: 1,
+                    ),
+                    borderRadius: 120,
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }

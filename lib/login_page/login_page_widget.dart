@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -179,7 +181,27 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
                     child: FFButtonWidget(
                       onPressed: () async {
-                        final user = await signInWithEmail(
+                        User user;
+                        if (emailTextController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Email required!',
+                              ),
+                            ),
+                          );
+                          return;
+                        } else if (passwordTextController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Password required!',
+                              ),
+                            ),
+                          );
+                          return;
+                        } else
+                        user = await signInWithEmail(
                           context,
                           emailTextController.text,
                           passwordTextController.text,
@@ -220,7 +242,43 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                         borderRadius: 1000,
                       ),
                     ),
-                  )
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 30, 0, 10),
+                    child: FFButtonWidget(
+                      onPressed: () async {
+                        if (emailTextController.text.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Email required!',
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+                        await resetPassword(
+                          email: emailTextController.text,
+                          context: context,
+                        );
+                      },
+                      text: 'Reset Password',
+                      options: FFButtonOptions(
+                        width: double.infinity,
+                        height: 50,
+                        color: FlutterFlowTheme.primaryColor,
+                        textStyle: FlutterFlowTheme.subtitle2.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                        borderSide: BorderSide(
+                          color: FlutterFlowTheme.secondaryColor,
+                          width: 1,
+                        ),
+                        borderRadius: 1000,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

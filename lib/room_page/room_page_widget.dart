@@ -7,6 +7,7 @@ import '../flutter_flow/upload_media.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class RoomPageWidget extends StatefulWidget {
   RoomPageWidget({
@@ -24,6 +25,7 @@ class _RoomPageWidgetState extends State<RoomPageWidget> {
   String uploadedFileUrl1;
   String uploadedFileUrl2;
   TextEditingController textController;
+  ScrollController _scrollController = ScrollController();
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -88,23 +90,22 @@ class _RoomPageWidgetState extends State<RoomPageWidget> {
                   child: StreamBuilder<List<MessagesRecord>>(
                     stream: queryMessagesRecord(
                       queryBuilder: (messagesRecord) => messagesRecord
-                          .where('room', isEqualTo: widget.room.reference),
+                          .where('room', isEqualTo: widget.room.reference)
+                          .orderBy('date_sent', descending: true),
                     ),
                     builder: (context, snapshot) {
-                      // Customize what your widget looks like when it's loading.
                       if (!snapshot.hasData) {
                         return Center(child: CircularProgressIndicator());
                       }
                       List<MessagesRecord> listViewMessagesRecordList =
                           snapshot.data;
-                      // Customize what your widget looks like with no query results.
                       if (snapshot.data.isEmpty) {
-                        // return Container();
-                        // For now, we'll just include some dummy data.
-                        listViewMessagesRecordList =
-                            createDummyMessagesRecord(count: 4);
+                        return Container();
                       }
                       return ListView.builder(
+                        controller: _scrollController,
+                        reverse: true,
+                        shrinkWrap: true,
                         padding: EdgeInsets.zero,
                         scrollDirection: Axis.vertical,
                         itemCount: listViewMessagesRecordList.length,
@@ -115,23 +116,20 @@ class _RoomPageWidgetState extends State<RoomPageWidget> {
                             stream: MessagesRecord.getDocument(
                                 listViewMessagesRecord.reference),
                             builder: (context, snapshot) {
-                              // Customize what your widget looks like when it's loading.
                               if (!snapshot.hasData) {
                                 return Center(
                                     child: CircularProgressIndicator());
                               }
                               final containerMessagesRecord = snapshot.data;
                               return Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 15),
                                 child: Container(
                                   width: 100,
-                                  height: 100,
                                   decoration: BoxDecoration(),
                                   child: StreamBuilder<UsersRecord>(
                                     stream: UsersRecord.getDocument(
                                         containerMessagesRecord.author),
                                     builder: (context, snapshot) {
-                                      // Customize what your widget looks like when it's loading.
                                       if (!snapshot.hasData) {
                                         return Center(
                                             child: CircularProgressIndicator());
@@ -140,128 +138,16 @@ class _RoomPageWidgetState extends State<RoomPageWidget> {
                                       return Padding(
                                         padding:
                                             EdgeInsets.fromLTRB(10, 5, 10, 0),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Container(
-                                              width: 50,
-                                              height: 50,
-                                              clipBehavior: Clip.antiAlias,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Image.network(
-                                                rowUsersRecord.photoUrl,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  10, 0, 0, 0),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: [
-                                                      Text(
-                                                        rowUsersRecord
-                                                            .displayName,
-                                                        style: FlutterFlowTheme
-                                                            .bodyText1
-                                                            .override(
-                                                          fontFamily:
-                                                              'Montserrat',
-                                                          color: FlutterFlowTheme
-                                                              .tertiaryColor,
-                                                          fontSize: 11,
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.fromLTRB(
-                                                                3, 0, 0, 0),
-                                                        child: Text(
-                                                          rowUsersRecord
-                                                              .lastName,
-                                                          style:
-                                                              FlutterFlowTheme
-                                                                  .bodyText1
-                                                                  .override(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            color: FlutterFlowTheme
-                                                                .tertiaryColor,
-                                                            fontSize: 11,
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            0, 5, 0, 5),
-                                                    child: Container(
-                                                      constraints:
-                                                          BoxConstraints(
-                                                        maxWidth: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.7,
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(100),
-                                                        border: Border.all(
-                                                          color: FlutterFlowTheme
-                                                              .tertiaryColor,
-                                                          width: 2,
-                                                        ),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            EdgeInsets.fromLTRB(
-                                                                5, 2, 5, 2),
-                                                        child: Text(
-                                                          'Hello World',
-                                                          style:
-                                                              FlutterFlowTheme
-                                                                  .bodyText1
-                                                                  .override(
-                                                            fontFamily:
-                                                                'Montserrat',
-                                                            color: FlutterFlowTheme
-                                                                .tertiaryColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    containerMessagesRecord
-                                                        .dateSent
-                                                        .toString(),
-                                                    style: FlutterFlowTheme
-                                                        .bodyText1
-                                                        .override(
-                                                      fontFamily: 'Montserrat',
-                                                      color: Color(0xA0FFFFFF),
-                                                      fontWeight:
-                                                          FontWeight.w200,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
+                                        child: rowUsersRecord.reference !=
+                                                currentUserReference
+                                            ? OtherUserRow(
+                                                rowUsersRecord: rowUsersRecord,
+                                                containerMessagesRecord:
+                                                    containerMessagesRecord)
+                                            : OwnUserRow(
+                                                rowUsersRecord: rowUsersRecord,
+                                                containerMessagesRecord:
+                                                    containerMessagesRecord),
                                       );
                                     },
                                   ),
@@ -288,7 +174,7 @@ class _RoomPageWidgetState extends State<RoomPageWidget> {
                           if (selectedMedia != null &&
                               validateFileFormat(
                                   selectedMedia.storagePath, context)) {
-                            showUploadMessage(context, 'Uploading file...',
+                            showUploadMessage(context, 'Sending image...',
                                 showLoading: true);
                             final downloadUrl = await uploadData(
                                 selectedMedia.storagePath, selectedMedia.bytes);
@@ -311,11 +197,18 @@ class _RoomPageWidgetState extends State<RoomPageWidget> {
                             image: image,
                             dateSent: dateSent,
                             room: room,
+                            video: '',
+                            text: 'Image',
                           );
 
                           await MessagesRecord.collection
                               .doc()
                               .set(messagesRecordData);
+                              _scrollController.animateTo(
+                            0.0,
+                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 300),
+                          );
                         },
                         icon: Icon(
                           Icons.photo,
@@ -326,11 +219,11 @@ class _RoomPageWidgetState extends State<RoomPageWidget> {
                       ),
                       IconButton(
                         onPressed: () async {
-                          final selectedMedia = await selectMedia();
+                          final selectedMedia = await selectMedia(fromCamera: true);
                           if (selectedMedia != null &&
                               validateFileFormat(
                                   selectedMedia.storagePath, context)) {
-                            showUploadMessage(context, 'Uploading file...',
+                            showUploadMessage(context, 'Sending image...',
                                 showLoading: true);
                             final downloadUrl = await uploadData(
                                 selectedMedia.storagePath, selectedMedia.bytes);
@@ -353,11 +246,18 @@ class _RoomPageWidgetState extends State<RoomPageWidget> {
                             image: image,
                             dateSent: dateSent,
                             room: room,
+                            video: '',
+                            text: 'Image',
                           );
 
                           await MessagesRecord.collection
                               .doc()
                               .set(messagesRecordData);
+                              _scrollController.animateTo(
+                            0.0,
+                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 300),
+                          );
                         },
                         icon: Icon(
                           Icons.camera_alt,
@@ -425,11 +325,23 @@ class _RoomPageWidgetState extends State<RoomPageWidget> {
                             text: text,
                             dateSent: dateSent,
                             room: room,
+                            image: '',
+                            video: '',
                           );
 
                           await MessagesRecord.collection
                               .doc()
                               .set(messagesRecordData);
+
+                          _scrollController.animateTo(
+                            0.0,
+                            curve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 300),
+                          );
+                          setState(() {
+                          textController.text = '';
+                            
+                          });
                         },
                         icon: Icon(
                           Icons.send,
@@ -446,6 +358,190 @@ class _RoomPageWidgetState extends State<RoomPageWidget> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class OtherUserRow extends StatelessWidget {
+  const OtherUserRow({
+    Key key,
+    @required this.rowUsersRecord,
+    @required this.containerMessagesRecord,
+  }) : super(key: key);
+
+  final UsersRecord rowUsersRecord;
+  final MessagesRecord containerMessagesRecord;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          width: 50,
+          height: 50,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          child: Image.network(
+            rowUsersRecord.photoUrl,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    '${rowUsersRecord.displayName} ${rowUsersRecord.lastName}',
+                    style: FlutterFlowTheme.bodyText1.override(
+                      fontFamily: 'Montserrat',
+                      color: FlutterFlowTheme.tertiaryColor,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.7,
+                  ),
+                  decoration: containerMessagesRecord.image != ''
+                      ? BoxDecoration()
+                      : BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 2,
+                          ),
+                        ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                    child: containerMessagesRecord.image != ''
+                        ? Image.network(
+                            containerMessagesRecord.image,
+                            fit: BoxFit.contain,
+                          )
+                        : Text(
+                            containerMessagesRecord.text,
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Montserrat',
+                              color: FlutterFlowTheme.tertiaryColor,
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+              Text(
+                '${timeago.format(containerMessagesRecord.dateSent.toDate())}',
+                style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Montserrat',
+                    color: Color(0xA0FFFFFF),
+                    fontWeight: FontWeight.w200,
+                    fontSize: 10),
+              )
+            ],
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class OwnUserRow extends StatelessWidget {
+  const OwnUserRow({
+    Key key,
+    @required this.rowUsersRecord,
+    @required this.containerMessagesRecord,
+  }) : super(key: key);
+
+  final UsersRecord rowUsersRecord;
+  final MessagesRecord containerMessagesRecord;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    'Me',
+                    style: FlutterFlowTheme.title3.override(
+                      fontFamily: 'Montserrat',
+                      color: FlutterFlowTheme.tertiaryColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height,
+                    maxWidth: MediaQuery.of(context).size.width * 0.8,
+                  ),
+                  decoration: containerMessagesRecord.image != ''
+                      ? BoxDecoration()
+                      : BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          color: FlutterFlowTheme.tertiaryColor,
+                          border: Border.all(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 2,
+                          ),
+                        ),
+                  child: Padding(
+                    padding: containerMessagesRecord.image != ''
+                        ? EdgeInsets.all(0)
+                        : EdgeInsets.fromLTRB(15, 5, 15, 5),
+                    child: containerMessagesRecord.image != ''
+                        ? Image.network(
+                            containerMessagesRecord.image,
+                            fit: BoxFit.contain,
+                          )
+                        : Text(
+                            containerMessagesRecord.text,
+                            style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Montserrat',
+                              color: FlutterFlowTheme.primaryColor,
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+              Text(
+                '${timeago.format(containerMessagesRecord.dateSent.toDate())}',
+                style: FlutterFlowTheme.bodyText1.override(
+                    fontFamily: 'Montserrat',
+                    color: Color(0xA0FFFFFF),
+                    fontWeight: FontWeight.w200,
+                    fontSize: 10),
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

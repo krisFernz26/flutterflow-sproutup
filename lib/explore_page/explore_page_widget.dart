@@ -1,3 +1,5 @@
+import 'package:sprout_up/auth/firebase_user_provider.dart';
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../create_post_page/create_post_page_widget.dart';
@@ -10,6 +12,8 @@ import '../startup_info_page/startup_info_page_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:intl/intl.dart';
 
 class ExplorePageWidget extends StatefulWidget {
   ExplorePageWidget({Key key}) : super(key: key);
@@ -135,7 +139,6 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                               descending: true),
                                     ),
                                     builder: (context, snapshot) {
-                                      // Customize what your widget looks like when it's loading.
                                       if (!snapshot.hasData) {
                                         return Center(
                                             child: CircularProgressIndicator());
@@ -143,12 +146,24 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                       List<PostsRecord>
                                           listViewPostsRecordList =
                                           snapshot.data;
-                                      // Customize what your widget looks like with no query results.
                                       if (snapshot.data.isEmpty) {
-                                        // return Container();
-                                        // For now, we'll just include some dummy data.
-                                        listViewPostsRecordList =
-                                            createDummyPostsRecord(count: 4);
+                                        return Padding(
+                                          padding:
+                                              EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                          child: Center(
+                                            child: Text(
+                                              'No Posts Retrieved',
+                                              style: FlutterFlowTheme.bodyText1
+                                                  .override(
+                                                fontFamily: 'Montserrat',
+                                                color: FlutterFlowTheme
+                                                    .secondaryColor,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        );
                                       }
                                       return Padding(
                                         padding:
@@ -175,13 +190,19 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                 height: 150,
                                                 child: Stack(
                                                   children: [
-                                                    Image.network(
-                                                      listViewPostsRecord
-                                                          .thumbnail,
-                                                      width: double.infinity,
-                                                      height: double.infinity,
-                                                      fit: BoxFit.cover,
-                                                    ),
+                                                    listViewPostsRecord
+                                                                .thumbnail ==
+                                                            ''
+                                                        ? Container()
+                                                        : Image.network(
+                                                            listViewPostsRecord
+                                                                .thumbnail,
+                                                            width:
+                                                                double.infinity,
+                                                            height:
+                                                                double.infinity,
+                                                            fit: BoxFit.cover,
+                                                          ),
                                                     Align(
                                                       alignment:
                                                           Alignment(0, 0),
@@ -206,7 +227,6 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                             .user),
                                                                 builder: (context,
                                                                     snapshot) {
-                                                                  // Customize what your widget looks like when it's loading.
                                                                   if (!snapshot
                                                                       .hasData) {
                                                                     return Center(
@@ -261,7 +281,7 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                               5),
                                                                           child:
                                                                               Text(
-                                                                            listViewPostsRecord.datePosted.toString(),
+                                                                            'Posted ${timeago.format(listViewPostsRecord.datePosted.toDate())}',
                                                                             style:
                                                                                 FlutterFlowTheme.bodyText1.override(
                                                                               fontFamily: 'Montserrat',
@@ -281,21 +301,13 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                                 MainAxisSize.max,
                                                                             children: [
                                                                               Text(
-                                                                                columnUsersRecord.displayName,
+                                                                                'Posted by ${columnUsersRecord.displayName} ${columnUsersRecord.lastName}',
                                                                                 style: FlutterFlowTheme.bodyText1.override(
                                                                                   fontFamily: 'Montserrat',
                                                                                   color: FlutterFlowTheme.secondaryColor,
                                                                                   fontSize: 13,
                                                                                 ),
                                                                               ),
-                                                                              Text(
-                                                                                columnUsersRecord.lastName,
-                                                                                style: FlutterFlowTheme.bodyText1.override(
-                                                                                  fontFamily: 'Montserrat',
-                                                                                  color: FlutterFlowTheme.secondaryColor,
-                                                                                  fontSize: 13,
-                                                                                ),
-                                                                              )
                                                                             ],
                                                                           ),
                                                                         ),
@@ -312,6 +324,7 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                             child:
                                                                                 Text(
                                                                               listViewPostsRecord.body,
+                                                                              overflow: TextOverflow.ellipsis,
                                                                               style: FlutterFlowTheme.bodyText1.override(
                                                                                 fontFamily: 'Montserrat',
                                                                                 color: FlutterFlowTheme.secondaryColor,
@@ -364,43 +377,81 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                       size: 24,
                                                                     ),
                                                                   ),
-                                                                  IconButton(
-                                                                    onPressed:
-                                                                        () async {
-                                                                      final postsRecordData =
-                                                                          {
-                                                                        'likes_count':
-                                                                            FieldValue.increment(1),
-                                                                        'liked_users':
-                                                                            FieldValue.arrayUnion([
-                                                                          currentUserReference
-                                                                        ]),
-                                                                      };
-
-                                                                      await listViewPostsRecord
-                                                                          .reference
-                                                                          .update(
-                                                                              postsRecordData);
-                                                                      final usersRecordData =
-                                                                          {
-                                                                        'likes_count':
-                                                                            FieldValue.increment(1),
-                                                                      };
-
-                                                                      await currentUserReference
-                                                                          .update(
-                                                                              usersRecordData);
-                                                                    },
-                                                                    icon: Icon(
-                                                                      Icons
-                                                                          .thumb_up_off_alt,
-                                                                      color: FlutterFlowTheme
-                                                                          .tertiaryColor,
-                                                                      size: 30,
+                                                                  Text(
+                                                                    NumberFormat
+                                                                            .compact()
+                                                                        .format(
+                                                                            listViewPostsRecord.likesCount),
+                                                                    style: FlutterFlowTheme
+                                                                        .bodyText1
+                                                                        .override(
+                                                                      fontFamily:
+                                                                          'Montserrat',
+                                                                      color: Color(
+                                                                          0x9BFFFFFF),
                                                                     ),
-                                                                    iconSize:
-                                                                        30,
-                                                                  )
+                                                                  ),
+                                                                  listViewPostsRecord
+                                                                              .user ==
+                                                                          currentUserReference
+                                                                      ? IconButton(
+                                                                          onPressed:
+                                                                              () async {
+                                                                            await listViewPostsRecord.reference.delete();
+                                                                          },
+                                                                          icon:
+                                                                              Icon(
+                                                                             Icons.delete_forever,
+                                                                            color:
+                                                                                FlutterFlowTheme.tertiaryColor,
+                                                                            size:
+                                                                                30,
+                                                                          ),
+                                                                          iconSize:
+                                                                              30,
+                                                                        )
+                                                                      : IconButton(
+                                                                          onPressed: listViewPostsRecord.user == currentUserReference
+                                                                              ? null
+                                                                              : () async {
+                                                                                  final postsRecordData = !listViewPostsRecord.likedUsers.contains(currentUserReference)
+                                                                                      ? {
+                                                                                          'likes_count': FieldValue.increment(1),
+                                                                                          'liked_users': FieldValue.arrayUnion([
+                                                                                            currentUserReference
+                                                                                          ]),
+                                                                                        }
+                                                                                      : {
+                                                                                          'likes_count': FieldValue.increment(-1),
+                                                                                          'liked_users': FieldValue.arrayRemove([
+                                                                                            currentUserReference
+                                                                                          ]),
+                                                                                        };
+
+                                                                                  await listViewPostsRecord.reference.update(postsRecordData);
+                                                                                  final usersRecordData = !listViewPostsRecord.likedUsers.contains(currentUserReference)
+                                                                                      ? {
+                                                                                          'likes_count': FieldValue.increment(1),
+                                                                                        }
+                                                                                      : {
+                                                                                          'likes_count': FieldValue.increment(-1),
+                                                                                        };
+
+                                                                                  await currentUserReference.update(usersRecordData);
+                                                                                },
+                                                                          icon:
+                                                                              Icon(
+                                                                            !listViewPostsRecord.likedUsers.contains(currentUserReference)
+                                                                                ? Icons.thumb_up_off_alt
+                                                                                : Icons.thumb_up_sharp,
+                                                                            color:
+                                                                                FlutterFlowTheme.tertiaryColor,
+                                                                            size:
+                                                                                30,
+                                                                          ),
+                                                                          iconSize:
+                                                                              30,
+                                                                        )
                                                                 ],
                                                               ),
                                                             )
@@ -432,7 +483,6 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                               descending: true),
                                     ),
                                     builder: (context, snapshot) {
-                                      // Customize what your widget looks like when it's loading.
                                       if (!snapshot.hasData) {
                                         return Center(
                                             child: CircularProgressIndicator());
@@ -440,16 +490,28 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                       List<StartupsRecord>
                                           listViewStartupsRecordList =
                                           snapshot.data;
-                                      // Customize what your widget looks like with no query results.
                                       if (snapshot.data.isEmpty) {
-                                        // return Container();
-                                        // For now, we'll just include some dummy data.
-                                        listViewStartupsRecordList =
-                                            createDummyStartupsRecord(count: 4);
+                                        return Padding(
+                                          padding:
+                                              EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                          child: Center(
+                                            child: Text(
+                                              'No Startups Retrieved',
+                                              style: FlutterFlowTheme.bodyText1
+                                                  .override(
+                                                fontFamily: 'Montserrat',
+                                                color: FlutterFlowTheme
+                                                    .secondaryColor,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                          ),
+                                        );
                                       }
                                       return Padding(
                                         padding:
-                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                            EdgeInsets.fromLTRB(10, 10, 10, 0),
                                         child: ListView.builder(
                                           padding: EdgeInsets.zero,
                                           scrollDirection: Axis.vertical,
@@ -506,14 +568,14 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   shape: BoxShape
-                                                                      .circle,
+                                                                      .rectangle,
                                                                 ),
                                                                 child: Image
                                                                     .network(
                                                                   listViewStartupsRecord
                                                                       .logo,
                                                                   fit: BoxFit
-                                                                      .fill,
+                                                                      .contain,
                                                                 ),
                                                               ),
                                                             ),
@@ -571,9 +633,7 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                               5),
                                                                       child:
                                                                           Text(
-                                                                        listViewStartupsRecord
-                                                                            .dateRegistered
-                                                                            .toString(),
+                                                                        'Registered ${timeago.format(listViewStartupsRecord.dateRegistered.toDate())}',
                                                                         style: FlutterFlowTheme
                                                                             .bodyText1
                                                                             .override(
@@ -592,29 +652,20 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                               0,
                                                                               2),
                                                                       child:
-                                                                          Row(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.max,
-                                                                        children: [
                                                                           Text(
-                                                                            'Looking For ',
-                                                                            style:
-                                                                                FlutterFlowTheme.bodyText1.override(
-                                                                              fontFamily: 'Montserrat',
-                                                                              color: FlutterFlowTheme.secondaryColor,
-                                                                              fontSize: 13,
-                                                                            ),
-                                                                          ),
-                                                                          Text(
-                                                                            listViewStartupsRecord.lookingFor,
-                                                                            style:
-                                                                                FlutterFlowTheme.bodyText1.override(
-                                                                              fontFamily: 'Montserrat',
-                                                                              color: FlutterFlowTheme.secondaryColor,
-                                                                              fontSize: 13,
-                                                                            ),
-                                                                          )
-                                                                        ],
+                                                                        'Looking For: ${listViewStartupsRecord.lookingFor}',
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        style: FlutterFlowTheme
+                                                                            .bodyText1
+                                                                            .override(
+                                                                          fontFamily:
+                                                                              'Montserrat',
+                                                                          color:
+                                                                              FlutterFlowTheme.secondaryColor,
+                                                                          fontSize:
+                                                                              13,
+                                                                        ),
                                                                       ),
                                                                     ),
                                                                     Expanded(
@@ -630,6 +681,8 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                             Text(
                                                                           listViewStartupsRecord
                                                                               .motto,
+                                                                          overflow:
+                                                                              TextOverflow.ellipsis,
                                                                           style: FlutterFlowTheme
                                                                               .bodyText1
                                                                               .override(
@@ -684,36 +737,58 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                       size: 24,
                                                                     ),
                                                                   ),
+                                                                  Text(
+                                                                    NumberFormat
+                                                                            .compact()
+                                                                        .format(
+                                                                            listViewStartupsRecord.followerCount),
+                                                                    style: FlutterFlowTheme
+                                                                        .bodyText1
+                                                                        .override(
+                                                                      fontFamily:
+                                                                          'Montserrat',
+                                                                      color: Color(
+                                                                          0x9BFFFFFF),
+                                                                    ),
+                                                                  ),
                                                                   IconButton(
-                                                                    onPressed:
-                                                                        () async {
-                                                                      final startupsRecordData =
-                                                                          {
-                                                                        'follower_count':
-                                                                            FieldValue.increment(1),
-                                                                        'followers':
-                                                                            FieldValue.arrayUnion([
-                                                                          currentUserReference
-                                                                        ]),
-                                                                      };
+                                                                    onPressed: listViewStartupsRecord.userRegisterer ==
+                                                                            currentUserReference
+                                                                        ? null
+                                                                        : () async {
+                                                                            final startupsRecordData = !listViewStartupsRecord.followers.contains(currentUserReference)
+                                                                                ? {
+                                                                                    'follower_count': FieldValue.increment(1),
+                                                                                    'followers': FieldValue.arrayUnion([
+                                                                                      currentUserReference
+                                                                                    ]),
+                                                                                  }
+                                                                                : {
+                                                                                    'follower_count': FieldValue.increment(-1),
+                                                                                    'followers': FieldValue.arrayRemove([
+                                                                                      currentUserReference
+                                                                                    ]),
+                                                                                  };
 
-                                                                      await listViewStartupsRecord
-                                                                          .reference
-                                                                          .update(
-                                                                              startupsRecordData);
-                                                                      final usersRecordData =
-                                                                          {
-                                                                        'follow_count':
-                                                                            FieldValue.increment(1),
-                                                                      };
+                                                                            await listViewStartupsRecord.reference.update(startupsRecordData);
+                                                                            final usersRecordData = !listViewStartupsRecord.followers.contains(currentUserReference)
+                                                                                ? {
+                                                                                    'follow_count': FieldValue.increment(1),
+                                                                                  }
+                                                                                : {
+                                                                                    'follow_count': FieldValue.increment(-1),
+                                                                                  };
 
-                                                                      await currentUserReference
-                                                                          .update(
-                                                                              usersRecordData);
-                                                                    },
+                                                                            await currentUserReference.update(usersRecordData);
+                                                                          },
                                                                     icon: Icon(
-                                                                      Icons
-                                                                          .favorite_border,
+                                                                      listViewStartupsRecord.followers.contains(currentUserReference) ||
+                                                                              listViewStartupsRecord.userRegisterer ==
+                                                                                  currentUserReference
+                                                                          ? Icons
+                                                                              .favorite
+                                                                          : Icons
+                                                                              .favorite_border,
                                                                       color: FlutterFlowTheme
                                                                           .tertiaryColor,
                                                                       size: 30,

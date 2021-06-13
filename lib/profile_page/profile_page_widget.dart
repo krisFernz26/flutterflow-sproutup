@@ -1,3 +1,5 @@
+import 'package:sprout_up/create_startup_page/create_startup_page_widget.dart';
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../create_post_page/create_post_page_widget.dart';
@@ -13,6 +15,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:intl/intl.dart';
 
 class ProfilePageWidget extends StatefulWidget {
   ProfilePageWidget({Key key}) : super(key: key);
@@ -175,7 +179,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                           ),
                                           child: Image.network(
                                             profilePageUsersRecord.photoUrl,
-                                            fit: BoxFit.fill,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),
@@ -187,6 +191,22 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '${profilePageUsersRecord.displayName} ${profilePageUsersRecord.lastName}',
+                                      style: FlutterFlowTheme.title1.override(
+                                        fontFamily: 'Montserrat',
+                                        color: FlutterFlowTheme.tertiaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                             Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   0, 0, 0, 2),
@@ -194,9 +214,9 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                 mainAxisSize: MainAxisSize.max,
                                                 children: [
                                                   Text(
-                                                    profilePageUsersRecord
-                                                        .applicationCount
-                                                        .toString(),
+                                                    NumberFormat.compact().format(
+                                                        profilePageUsersRecord
+                                                            .applicationCount),
                                                     style: FlutterFlowTheme
                                                         .bodyText1
                                                         .override(
@@ -228,9 +248,9 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Text(
-                                                  profilePageUsersRecord
-                                                      .investmentCount
-                                                      .toString(),
+                                                  NumberFormat.compact().format(
+                                                      profilePageUsersRecord
+                                                          .investmentCount),
                                                   style: FlutterFlowTheme
                                                       .bodyText1
                                                       .override(
@@ -259,9 +279,9 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Text(
-                                                  profilePageUsersRecord
-                                                      .followCount
-                                                      .toString(),
+                                                  NumberFormat.compact().format(
+                                                      profilePageUsersRecord
+                                                          .followCount),
                                                   style: FlutterFlowTheme
                                                       .bodyText1
                                                       .override(
@@ -290,9 +310,9 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                               mainAxisSize: MainAxisSize.max,
                                               children: [
                                                 Text(
-                                                  profilePageUsersRecord
-                                                      .likesCount
-                                                      .toString(),
+                                                  NumberFormat.compact().format(
+                                                      profilePageUsersRecord
+                                                          .likesCount),
                                                   style: FlutterFlowTheme
                                                       .bodyText1
                                                       .override(
@@ -323,54 +343,6 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                     ],
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 30),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        profilePageUsersRecord.displayName,
-                                        style: FlutterFlowTheme.title1.override(
-                                          fontFamily: 'Montserrat',
-                                          color: FlutterFlowTheme.tertiaryColor,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(5, 0, 0, 0),
-                                        child: Text(
-                                          profilePageUsersRecord.lastName,
-                                          style:
-                                              FlutterFlowTheme.title1.override(
-                                            fontFamily: 'Montserrat',
-                                            color:
-                                                FlutterFlowTheme.tertiaryColor,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Startup',
-                                        style: FlutterFlowTheme.title1.override(
-                                          fontFamily: 'Montserrat',
-                                          color: FlutterFlowTheme.tertiaryColor,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
                                 StreamBuilder<List<StartupsRecord>>(
                                   stream: queryStartupsRecord(
                                     queryBuilder: (startupsRecord) =>
@@ -380,25 +352,64 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                     singleRecord: true,
                                   ),
                                   builder: (context, snapshot) {
-                                    // Customize what your widget looks like when it's loading.
                                     if (!snapshot.hasData) {
                                       return Center(
                                           child: CircularProgressIndicator());
                                     }
                                     List<StartupsRecord> rowStartupsRecordList =
                                         snapshot.data;
-                                    // Customize what your widget looks like with no query results.
+
                                     if (snapshot.data.isEmpty) {
-                                      // return Container();
-                                      // For now, we'll just include some dummy data.
-                                      rowStartupsRecordList =
-                                          createDummyStartupsRecord(count: 1);
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 30, 0, 30),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              child: FFButtonWidget(
+                                                text: 'Register Startup',
+                                                onPressed: () async {
+                                                  await Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          CreateStartupPageWidget(),
+                                                    ),
+                                                  );
+                                                },
+                                                options: FFButtonOptions(
+                                                  width: 180,
+                                                  height: 40,
+                                                  color: Color(0x00FF0003),
+                                                  textStyle: FlutterFlowTheme
+                                                      .title3
+                                                      .override(
+                                                    fontFamily: 'Montserrat',
+                                                    color: FlutterFlowTheme
+                                                        .tertiaryColor,
+                                                  ),
+                                                  elevation: 0,
+                                                  borderSide: BorderSide(
+                                                    color: FlutterFlowTheme
+                                                        .tertiaryColor,
+                                                    width: 1,
+                                                  ),
+                                                  borderRadius: 120,
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      );
                                     }
                                     final rowStartupsRecord =
                                         rowStartupsRecordList.first;
                                     return Padding(
                                       padding:
-                                          EdgeInsets.fromLTRB(10, 0, 0, 10),
+                                          EdgeInsets.fromLTRB(10, 25, 0, 30),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -410,11 +421,11 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                               height: 120,
                                               clipBehavior: Clip.antiAlias,
                                               decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
+                                                shape: BoxShape.rectangle,
                                               ),
                                               child: Image.network(
                                                 rowStartupsRecord.logo,
-                                                fit: BoxFit.fill,
+                                                fit: BoxFit.contain,
                                               ),
                                             ),
                                           ),
@@ -426,6 +437,22 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
+                                                
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      rowStartupsRecord.name,
+                                      style: FlutterFlowTheme.title1.override(
+                                        fontFamily: 'Montserrat',
+                                        color: FlutterFlowTheme.tertiaryColor,
+                                      ),
+                                    )
+                                  ],
+                                ),
                                                 Padding(
                                                   padding: EdgeInsets.fromLTRB(
                                                       0, 0, 0, 2),
@@ -550,7 +577,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                           EdgeInsets.fromLTRB(
                                                               0, 5, 5, 0),
                                                       child: Text(
-                                                        'Registered on',
+                                                        'Registered',
                                                         style: FlutterFlowTheme
                                                             .bodyText1
                                                             .override(
@@ -566,9 +593,10 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                           EdgeInsets.fromLTRB(
                                                               0, 5, 0, 0),
                                                       child: Text(
-                                                        rowStartupsRecord
-                                                            .dateRegistered
-                                                            .toString(),
+                                                        timeago.format(
+                                                            rowStartupsRecord
+                                                                .dateRegistered
+                                                                .toDate()),
                                                         style: FlutterFlowTheme
                                                             .bodyText1
                                                             .override(
@@ -588,58 +616,6 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                       ),
                                     );
                                   },
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 30),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      StreamBuilder<List<StartupsRecord>>(
-                                        stream: queryStartupsRecord(
-                                          queryBuilder: (startupsRecord) =>
-                                              startupsRecord.where(
-                                                  'user_registerer',
-                                                  isEqualTo:
-                                                      profilePageUsersRecord
-                                                          .reference),
-                                          singleRecord: true,
-                                        ),
-                                        builder: (context, snapshot) {
-                                          // Customize what your widget looks like when it's loading.
-                                          if (!snapshot.hasData) {
-                                            return Center(
-                                                child:
-                                                    CircularProgressIndicator());
-                                          }
-                                          List<StartupsRecord>
-                                              textStartupsRecordList =
-                                              snapshot.data;
-                                          // Customize what your widget looks like with no query results.
-                                          if (snapshot.data.isEmpty) {
-                                            // return Container();
-                                            // For now, we'll just include some dummy data.
-                                            textStartupsRecordList =
-                                                createDummyStartupsRecord(
-                                                    count: 1);
-                                          }
-                                          final textStartupsRecord =
-                                              textStartupsRecordList.first;
-                                          return Text(
-                                            textStartupsRecord.name,
-                                            style: FlutterFlowTheme.title1
-                                                .override(
-                                              fontFamily: 'Montserrat',
-                                              color: FlutterFlowTheme
-                                                  .tertiaryColor,
-                                            ),
-                                          );
-                                        },
-                                      )
-                                    ],
-                                  ),
                                 ),
                                 Row(
                                   mainAxisSize: MainAxisSize.max,
@@ -664,7 +640,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                   ],
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 90),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -716,58 +692,6 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Padding(
-                                padding: EdgeInsets.fromLTRB(50, 10, 50, 0),
-                                child: TextFormField(
-                                  controller: textController1,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    labelText: 'Search',
-                                    labelStyle:
-                                        FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                    hintText: 'Search...',
-                                    hintStyle:
-                                        FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(20),
-                                        bottomRight: Radius.circular(20),
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20),
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(20),
-                                        bottomRight: Radius.circular(20),
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20),
-                                      ),
-                                    ),
-                                    filled: true,
-                                    fillColor: Color(0x1BFFFFFF),
-                                  ),
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Montserrat',
-                                    color: FlutterFlowTheme.tertiaryColor,
-                                  ),
-                                ),
-                              ),
-                              Padding(
                                 padding: EdgeInsets.fromLTRB(0, 20, 0, 5),
                                 child: FFButtonWidget(
                                   onPressed: () async {
@@ -807,23 +731,35 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                     queryBuilder: (postsRecord) => postsRecord
                                         .where('user',
                                             isEqualTo: currentUserReference)
-                                        .orderBy('date_posted',
+                                        .orderBy('date_updated',
                                             descending: true),
                                   ),
                                   builder: (context, snapshot) {
-                                    // Customize what your widget looks like when it's loading.
                                     if (!snapshot.hasData) {
                                       return Center(
                                           child: CircularProgressIndicator());
                                     }
                                     List<PostsRecord> listViewPostsRecordList =
                                         snapshot.data;
-                                    // Customize what your widget looks like with no query results.
+
                                     if (snapshot.data.isEmpty) {
-                                      // return Container();
-                                      // For now, we'll just include some dummy data.
-                                      listViewPostsRecordList =
-                                          createDummyPostsRecord(count: 4);
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        child: Center(
+                                          child: Text(
+                                            'No Posts Retrieved',
+                                            style: FlutterFlowTheme.bodyText1
+                                                .override(
+                                              fontFamily: 'Montserrat',
+                                              color: FlutterFlowTheme
+                                                  .secondaryColor,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      );
                                     }
                                     return Padding(
                                       padding:
@@ -849,13 +785,19 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                               height: 150,
                                               child: Stack(
                                                 children: [
-                                                  Image.network(
-                                                    listViewPostsRecord
-                                                        .thumbnail,
-                                                    width: double.infinity,
-                                                    height: double.infinity,
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                                  listViewPostsRecord
+                                                              .thumbnail ==
+                                                          ''
+                                                      ? Container()
+                                                      : Image.network(
+                                                          listViewPostsRecord
+                                                              .thumbnail,
+                                                          width:
+                                                              double.infinity,
+                                                          height:
+                                                              double.infinity,
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                   Align(
                                                     alignment: Alignment(0, 0),
                                                     child: Container(
@@ -938,9 +880,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                             5),
                                                                         child:
                                                                             Text(
-                                                                          listViewPostsRecord
-                                                                              .datePosted
-                                                                              .toString(),
+                                                                          'Posted ${timeago.format(listViewPostsRecord.datePosted.toDate())}',
                                                                           style: FlutterFlowTheme
                                                                               .bodyText1
                                                                               .override(
@@ -951,36 +891,29 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                           ),
                                                                         ),
                                                                       ),
-                                                                      Padding(
-                                                                        padding: EdgeInsets.fromLTRB(
-                                                                            0,
-                                                                            0,
-                                                                            0,
-                                                                            2),
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisSize:
-                                                                              MainAxisSize.max,
-                                                                          children: [
-                                                                            Text(
-                                                                              columnUsersRecord.displayName,
-                                                                              style: FlutterFlowTheme.bodyText1.override(
-                                                                                fontFamily: 'Montserrat',
-                                                                                color: FlutterFlowTheme.secondaryColor,
-                                                                                fontSize: 13,
+                                                                      
+                                                                        Padding(
+                                                                          padding: EdgeInsets.fromLTRB(
+                                                                              0,
+                                                                              0,
+                                                                              0,
+                                                                              2),
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.max,
+                                                                            children: [
+                                                                              Text(
+                                                                                'Posted by ${columnUsersRecord.displayName} ${columnUsersRecord.lastName}',
+                                                                                style: FlutterFlowTheme.bodyText1.override(
+                                                                                  fontFamily: 'Montserrat',
+                                                                                  color: FlutterFlowTheme.secondaryColor,
+                                                                                  fontSize: 13,
+                                                                                ),
                                                                               ),
-                                                                            ),
-                                                                            Text(
-                                                                              columnUsersRecord.lastName,
-                                                                              style: FlutterFlowTheme.bodyText1.override(
-                                                                                fontFamily: 'Montserrat',
-                                                                                color: FlutterFlowTheme.secondaryColor,
-                                                                                fontSize: 13,
-                                                                              ),
-                                                                            )
-                                                                          ],
+                                                                            ],
+                                                                          ),
                                                                         ),
-                                                                      ),
                                                                       Expanded(
                                                                         flex: 1,
                                                                         child:
@@ -993,6 +926,8 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                           child:
                                                                               Text(
                                                                             listViewPostsRecord.body,
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
                                                                             style:
                                                                                 FlutterFlowTheme.bodyText1.override(
                                                                               fontFamily: 'Montserrat',
@@ -1043,36 +978,85 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                     size: 24,
                                                                   ),
                                                                 ),
-                                                                IconButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    print(
-                                                                        'IconButton pressed ...');
-                                                                  },
-                                                                  icon: Icon(
-                                                                    Icons.edit,
-                                                                    color: FlutterFlowTheme
-                                                                        .tertiaryColor,
-                                                                    size: 30,
+                                                                Text(
+                                                                  NumberFormat
+                                                                          .compact()
+                                                                      .format(listViewPostsRecord
+                                                                          .likesCount),
+                                                                  style: FlutterFlowTheme
+                                                                      .bodyText1
+                                                                      .override(
+                                                                    fontFamily:
+                                                                        'Montserrat',
+                                                                    color: Color(
+                                                                        0x9BFFFFFF),
                                                                   ),
-                                                                  iconSize: 30,
                                                                 ),
-                                                                IconButton(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    await listViewPostsRecord
-                                                                        .reference
-                                                                        .delete();
-                                                                  },
-                                                                  icon: Icon(
-                                                                    Icons
-                                                                        .delete,
-                                                                    color: FlutterFlowTheme
-                                                                        .tertiaryColor,
-                                                                    size: 30,
-                                                                  ),
-                                                                  iconSize: 30,
-                                                                )
+                                                                listViewPostsRecord
+                                                                            .user ==
+                                                                        currentUserReference
+                                                                    ? IconButton(
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await listViewPostsRecord
+                                                                              .reference
+                                                                              .delete();
+                                                                        },
+                                                                        icon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .delete_forever,
+                                                                          color:
+                                                                              FlutterFlowTheme.tertiaryColor,
+                                                                          size:
+                                                                              30,
+                                                                        ),
+                                                                        iconSize:
+                                                                            30,
+                                                                      )
+                                                                    : IconButton(
+                                                                        onPressed: listViewPostsRecord.user ==
+                                                                                currentUserReference
+                                                                            ? null
+                                                                            : () async {
+                                                                                final postsRecordData = !listViewPostsRecord.likedUsers.contains(currentUserReference)
+                                                                                    ? {
+                                                                                        'likes_count': FieldValue.increment(1),
+                                                                                        'liked_users': FieldValue.arrayUnion([
+                                                                                          currentUserReference
+                                                                                        ]),
+                                                                                      }
+                                                                                    : {
+                                                                                        'likes_count': FieldValue.increment(-1),
+                                                                                        'liked_users': FieldValue.arrayRemove([
+                                                                                          currentUserReference
+                                                                                        ]),
+                                                                                      };
+
+                                                                                await listViewPostsRecord.reference.update(postsRecordData);
+                                                                                final usersRecordData = !listViewPostsRecord.likedUsers.contains(currentUserReference)
+                                                                                    ? {
+                                                                                        'likes_count': FieldValue.increment(1),
+                                                                                      }
+                                                                                    : {
+                                                                                        'likes_count': FieldValue.increment(-1),
+                                                                                      };
+
+                                                                                await currentUserReference.update(usersRecordData);
+                                                                              },
+                                                                        icon:
+                                                                            Icon(
+                                                                          listViewPostsRecord.user != currentUserReference || !listViewPostsRecord.likedUsers.contains(currentUserReference)
+                                                                              ? Icons.thumb_up_off_alt
+                                                                              : Icons.thumb_up_sharp,
+                                                                          color:
+                                                                              FlutterFlowTheme.tertiaryColor,
+                                                                          size:
+                                                                              30,
+                                                                        ),
+                                                                        iconSize:
+                                                                            30,
+                                                                      )
                                                               ],
                                                             ),
                                                           )
@@ -1095,58 +1079,6 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                           Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(50, 10, 50, 5),
-                                child: TextFormField(
-                                  controller: textController2,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    labelText: 'Search',
-                                    labelStyle:
-                                        FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                    hintText: 'Search...',
-                                    hintStyle:
-                                        FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(20),
-                                        bottomRight: Radius.circular(20),
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20),
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(20),
-                                        bottomRight: Radius.circular(20),
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20),
-                                      ),
-                                    ),
-                                    filled: true,
-                                    fillColor: Color(0x1BFFFFFF),
-                                  ),
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Montserrat',
-                                    color: FlutterFlowTheme.tertiaryColor,
-                                  ),
-                                ),
-                              ),
                               Expanded(
                                 child: StreamBuilder<List<StartupsRecord>>(
                                   stream: queryStartupsRecord(
@@ -1159,7 +1091,6 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                 descending: true),
                                   ),
                                   builder: (context, snapshot) {
-                                    // Customize what your widget looks like when it's loading.
                                     if (!snapshot.hasData) {
                                       return Center(
                                           child: CircularProgressIndicator());
@@ -1169,14 +1100,27 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                         snapshot.data;
                                     // Customize what your widget looks like with no query results.
                                     if (snapshot.data.isEmpty) {
-                                      // return Container();
-                                      // For now, we'll just include some dummy data.
-                                      listViewStartupsRecordList =
-                                          createDummyStartupsRecord(count: 4);
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        child: Center(
+                                          child: Text(
+                                            'No Followed Startups Retrieved',
+                                            style: FlutterFlowTheme.bodyText1
+                                                .override(
+                                              fontFamily: 'Montserrat',
+                                              color: FlutterFlowTheme
+                                                  .secondaryColor,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      );
                                     }
                                     return Padding(
                                       padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                          EdgeInsets.fromLTRB(10, 10, 10, 0),
                                       child: ListView.builder(
                                         padding: EdgeInsets.zero,
                                         scrollDirection: Axis.vertical,
@@ -1226,14 +1170,14 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                               decoration:
                                                                   BoxDecoration(
                                                                 shape: BoxShape
-                                                                    .circle,
+                                                                    .rectangle,
                                                               ),
                                                               child:
                                                                   Image.network(
                                                                 listViewStartupsRecord
                                                                     .logo,
-                                                                fit:
-                                                                    BoxFit.fill,
+                                                                fit: BoxFit
+                                                                    .contain,
                                                               ),
                                                             ),
                                                           ),
@@ -1289,9 +1233,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                             0,
                                                                             5),
                                                                     child: Text(
-                                                                      listViewStartupsRecord
-                                                                          .dateRegistered
-                                                                          .toString(),
+                                                                      'Registered ${timeago.format(listViewStartupsRecord.dateRegistered.toDate())}',
                                                                       style: FlutterFlowTheme
                                                                           .bodyText1
                                                                           .override(
@@ -1309,39 +1251,21 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                             0,
                                                                             0,
                                                                             2),
-                                                                    child: Row(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .max,
-                                                                      children: [
-                                                                        Text(
-                                                                          'Looking For ',
-                                                                          style: FlutterFlowTheme
-                                                                              .bodyText1
-                                                                              .override(
-                                                                            fontFamily:
-                                                                                'Montserrat',
-                                                                            color:
-                                                                                FlutterFlowTheme.secondaryColor,
-                                                                            fontSize:
-                                                                                13,
-                                                                          ),
-                                                                        ),
-                                                                        Text(
-                                                                          listViewStartupsRecord
-                                                                              .lookingFor,
-                                                                          style: FlutterFlowTheme
-                                                                              .bodyText1
-                                                                              .override(
-                                                                            fontFamily:
-                                                                                'Montserrat',
-                                                                            color:
-                                                                                FlutterFlowTheme.secondaryColor,
-                                                                            fontSize:
-                                                                                13,
-                                                                          ),
-                                                                        )
-                                                                      ],
+                                                                    child: Text(
+                                                                      'Looking For: ${listViewStartupsRecord.lookingFor}',
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      style: FlutterFlowTheme
+                                                                          .bodyText1
+                                                                          .override(
+                                                                        fontFamily:
+                                                                            'Montserrat',
+                                                                        color: FlutterFlowTheme
+                                                                            .secondaryColor,
+                                                                        fontSize:
+                                                                            13,
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                   Expanded(
@@ -1358,6 +1282,8 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                           Text(
                                                                         listViewStartupsRecord
                                                                             .motto,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
                                                                         style: FlutterFlowTheme
                                                                             .bodyText1
                                                                             .override(
@@ -1409,39 +1335,62 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                     size: 24,
                                                                   ),
                                                                 ),
+                                                                Text(
+                                                                  NumberFormat
+                                                                          .compact()
+                                                                      .format(listViewStartupsRecord
+                                                                          .followerCount),
+                                                                  style: FlutterFlowTheme
+                                                                      .bodyText1
+                                                                      .override(
+                                                                    fontFamily:
+                                                                        'Montserrat',
+                                                                    color: Color(
+                                                                        0x9BFFFFFF),
+                                                                  ),
+                                                                ),
                                                                 IconButton(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    final startupsRecordData =
-                                                                        {
-                                                                      'follower_count':
-                                                                          FieldValue.increment(
-                                                                              -1),
-                                                                      'followers':
-                                                                          FieldValue
-                                                                              .arrayRemove([
-                                                                        currentUserReference
-                                                                      ]),
-                                                                    };
+                                                                  onPressed: listViewStartupsRecord
+                                                                              .userRegisterer ==
+                                                                          currentUserReference
+                                                                      ? null
+                                                                      : () async {
+                                                                          final startupsRecordData = !listViewStartupsRecord.followers.contains(currentUserReference)
+                                                                              ? {
+                                                                                  'follower_count': FieldValue.increment(1),
+                                                                                  'followers': FieldValue.arrayUnion([
+                                                                                    currentUserReference
+                                                                                  ]),
+                                                                                }
+                                                                              : {
+                                                                                  'follower_count': FieldValue.increment(-1),
+                                                                                  'followers': FieldValue.arrayRemove([
+                                                                                    currentUserReference
+                                                                                  ]),
+                                                                                };
 
-                                                                    await listViewStartupsRecord
-                                                                        .reference
-                                                                        .update(
-                                                                            startupsRecordData);
-                                                                    final usersRecordData =
-                                                                        {
-                                                                      'follow_count':
-                                                                          FieldValue.increment(
-                                                                              -1),
-                                                                    };
+                                                                          await listViewStartupsRecord
+                                                                              .reference
+                                                                              .update(startupsRecordData);
+                                                                          final usersRecordData = !listViewStartupsRecord.followers.contains(currentUserReference)
+                                                                              ? {
+                                                                                  'follow_count': FieldValue.increment(1),
+                                                                                }
+                                                                              : {
+                                                                                  'follow_count': FieldValue.increment(-1),
+                                                                                };
 
-                                                                    await currentUserReference
-                                                                        .update(
-                                                                            usersRecordData);
-                                                                  },
+                                                                          await currentUserReference
+                                                                              .update(usersRecordData);
+                                                                        },
                                                                   icon: Icon(
-                                                                    Icons
-                                                                        .favorite,
+                                                                    listViewStartupsRecord.followers.contains(currentUserReference) ||
+                                                                            listViewStartupsRecord.userRegisterer ==
+                                                                                currentUserReference
+                                                                        ? Icons
+                                                                            .favorite
+                                                                        : Icons
+                                                                            .favorite_border,
                                                                     color: FlutterFlowTheme
                                                                         .tertiaryColor,
                                                                     size: 30,
@@ -1470,58 +1419,6 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                           Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(50, 10, 50, 10),
-                                child: TextFormField(
-                                  controller: textController3,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    isDense: true,
-                                    labelText: 'Search',
-                                    labelStyle:
-                                        FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                    hintText: 'Search...',
-                                    hintStyle:
-                                        FlutterFlowTheme.bodyText1.override(
-                                      fontFamily: 'Montserrat',
-                                      color: FlutterFlowTheme.tertiaryColor,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(20),
-                                        bottomRight: Radius.circular(20),
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20),
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: FlutterFlowTheme.tertiaryColor,
-                                        width: 1,
-                                      ),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(20),
-                                        bottomRight: Radius.circular(20),
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20),
-                                      ),
-                                    ),
-                                    filled: true,
-                                    fillColor: Color(0x1BFFFFFF),
-                                  ),
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Montserrat',
-                                    color: FlutterFlowTheme.tertiaryColor,
-                                  ),
-                                ),
-                              ),
                               Expanded(
                                 child: StreamBuilder<List<PostsRecord>>(
                                   stream: queryPostsRecord(
@@ -1532,19 +1429,31 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                             descending: true),
                                   ),
                                   builder: (context, snapshot) {
-                                    // Customize what your widget looks like when it's loading.
                                     if (!snapshot.hasData) {
                                       return Center(
                                           child: CircularProgressIndicator());
                                     }
                                     List<PostsRecord> listViewPostsRecordList =
                                         snapshot.data;
-                                    // Customize what your widget looks like with no query results.
+
                                     if (snapshot.data.isEmpty) {
-                                      // return Container();
-                                      // For now, we'll just include some dummy data.
-                                      listViewPostsRecordList =
-                                          createDummyPostsRecord(count: 4);
+                                      return Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        child: Center(
+                                          child: Text(
+                                            'No Liked Posts Retrieved',
+                                            style: FlutterFlowTheme.bodyText1
+                                                .override(
+                                              fontFamily: 'Montserrat',
+                                              color: FlutterFlowTheme
+                                                  .secondaryColor,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      );
                                     }
                                     return Padding(
                                       padding:
@@ -1570,13 +1479,19 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                               height: 150,
                                               child: Stack(
                                                 children: [
-                                                  Image.network(
-                                                    listViewPostsRecord
-                                                        .thumbnail,
-                                                    width: double.infinity,
-                                                    height: double.infinity,
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                                  listViewPostsRecord
+                                                              .thumbnail ==
+                                                          ''
+                                                      ? Container()
+                                                      : Image.network(
+                                                          listViewPostsRecord
+                                                              .thumbnail,
+                                                          width:
+                                                              double.infinity,
+                                                          height:
+                                                              double.infinity,
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                   Align(
                                                     alignment: Alignment(0, 0),
                                                     child: Container(
@@ -1599,7 +1514,6 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                           .user),
                                                               builder: (context,
                                                                   snapshot) {
-                                                                // Customize what your widget looks like when it's loading.
                                                                 if (!snapshot
                                                                     .hasData) {
                                                                   return Center(
@@ -1659,9 +1573,7 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                             5),
                                                                         child:
                                                                             Text(
-                                                                          listViewPostsRecord
-                                                                              .datePosted
-                                                                              .toString(),
+                                                                          'Posted ${timeago.format(listViewPostsRecord.datePosted.toDate())}',
                                                                           style: FlutterFlowTheme
                                                                               .bodyText1
                                                                               .override(
@@ -1714,6 +1626,8 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                           child:
                                                                               Text(
                                                                             listViewPostsRecord.body,
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
                                                                             style:
                                                                                 FlutterFlowTheme.bodyText1.override(
                                                                               fontFamily: 'Montserrat',
@@ -1764,39 +1678,61 @@ class _ProfilePageWidgetState extends State<ProfilePageWidget> {
                                                                     size: 24,
                                                                   ),
                                                                 ),
+                                                                Text(
+                                                                  NumberFormat
+                                                                          .compact()
+                                                                      .format(listViewPostsRecord
+                                                                          .likesCount),
+                                                                  style: FlutterFlowTheme
+                                                                      .bodyText1
+                                                                      .override(
+                                                                    fontFamily:
+                                                                        'Montserrat',
+                                                                    color: Color(
+                                                                        0x9BFFFFFF),
+                                                                  ),
+                                                                ),
                                                                 IconButton(
-                                                                  onPressed:
-                                                                      () async {
-                                                                    final postsRecordData =
-                                                                        {
-                                                                      'likes_count':
-                                                                          FieldValue.increment(
-                                                                              -1),
-                                                                      'liked_users':
-                                                                          FieldValue
-                                                                              .arrayRemove([
-                                                                        currentUserReference
-                                                                      ]),
-                                                                    };
+                                                                  onPressed: listViewPostsRecord
+                                                                              .user ==
+                                                                          currentUserReference
+                                                                      ? null
+                                                                      : () async {
+                                                                          final postsRecordData = !listViewPostsRecord.likedUsers.contains(currentUserReference)
+                                                                              ? {
+                                                                                  'likes_count': FieldValue.increment(1),
+                                                                                  'liked_users': FieldValue.arrayUnion([
+                                                                                    currentUserReference
+                                                                                  ]),
+                                                                                }
+                                                                              : {
+                                                                                  'likes_count': FieldValue.increment(-1),
+                                                                                  'liked_users': FieldValue.arrayRemove([
+                                                                                    currentUserReference
+                                                                                  ]),
+                                                                                };
 
-                                                                    await listViewPostsRecord
-                                                                        .reference
-                                                                        .update(
-                                                                            postsRecordData);
-                                                                    final usersRecordData =
-                                                                        {
-                                                                      'likes_count':
-                                                                          FieldValue.increment(
-                                                                              -1),
-                                                                    };
+                                                                          await listViewPostsRecord
+                                                                              .reference
+                                                                              .update(postsRecordData);
+                                                                          final usersRecordData = !listViewPostsRecord.likedUsers.contains(currentUserReference)
+                                                                              ? {
+                                                                                  'likes_count': FieldValue.increment(1),
+                                                                                }
+                                                                              : {
+                                                                                  'likes_count': FieldValue.increment(-1),
+                                                                                };
 
-                                                                    await currentUserReference
-                                                                        .update(
-                                                                            usersRecordData);
-                                                                  },
+                                                                          await currentUserReference
+                                                                              .update(usersRecordData);
+                                                                        },
                                                                   icon: Icon(
-                                                                    Icons
-                                                                        .thumb_up,
+                                                                            !listViewPostsRecord.likedUsers.contains(
+                                                                                currentUserReference)
+                                                                        ? Icons
+                                                                            .thumb_up_off_alt
+                                                                        : Icons
+                                                                            .thumb_up_sharp,
                                                                     color: FlutterFlowTheme
                                                                         .tertiaryColor,
                                                                     size: 30,

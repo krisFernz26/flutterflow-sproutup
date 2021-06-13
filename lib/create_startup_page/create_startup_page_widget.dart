@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../backend/firebase_storage/storage.dart';
@@ -20,8 +22,9 @@ class CreateStartupPageWidget extends StatefulWidget {
 }
 
 class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
-  String uploadedFileUrl1;
-  String uploadedFileUrl2;
+  String uploadedFileUrl;
+  SelectedMedia selectedMedia;
+  List<SelectedMedia> selectedMediaList = [];
   TextEditingController textController1;
   TextEditingController textController2;
   TextEditingController textController3;
@@ -37,6 +40,34 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
     textController3 = TextEditingController();
     textController4 = TextEditingController();
     textController5 = TextEditingController();
+  }
+
+  Future<String> uploadLogo() async {
+    if (this.selectedMedia != null &&
+        validateFileFormat(this.selectedMedia.storagePath, context)) {
+      showUploadMessage(context, 'Uploading file...', showLoading: true);
+    }
+    final downloadUrl = await uploadData(
+        this.selectedMedia.storagePath, this.selectedMedia.bytes);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    if (downloadUrl != null) {
+      showUploadMessage(context, 'Success!');
+      return downloadUrl;
+    } else {
+      showUploadMessage(context, 'Failed to upload media');
+      return '';
+    }
+  }
+
+  Future<List<String>> uploadPhotos() async {
+    if (selectedMediaList.isNotEmpty) {
+      return await Future.wait<String>(selectedMediaList.map((selectedMedia) async {
+        return uploadData(
+            'users/${currentUserReference.id}/${textController1.text}/images/${Uuid().v4()}',
+            selectedMedia.bytes);
+      }).toList());
+    }
+    return [];
   }
 
   @override
@@ -73,78 +104,181 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  selectedMedia == null
+                      ? Container()
+                      : Padding(
+                          padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+                          child: InkWell(
+                            onTap: () async {
+                              selectedMedia = await selectMedia();
+                              setState(() {});
+                            },
+                            child: Container(
+                              height: 120,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                              ),
+                              child: Image.memory(
+                                selectedMedia.bytes,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                        ),
+                  selectedMedia != null
+                      ? Container()
+                      : Padding(
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                          child: FFButtonWidget(
+                            onPressed: () async {
+                              selectedMedia = await selectMedia();
+                              setState(() {});
+                            },
+                            text: 'Upload Logo',
+                            options: FFButtonOptions(
+                              width: 130,
+                              height: 40,
+                              color: FlutterFlowTheme.tertiaryColor,
+                              textStyle: FlutterFlowTheme.subtitle2.override(
+                                fontFamily: 'Montserrat',
+                                color: FlutterFlowTheme.primaryColor,
+                              ),
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                                width: 1,
+                              ),
+                              borderRadius: 12,
+                            ),
+                          ),
+                        ),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
-                    child: InkWell(
-                      onTap: () async {
-                        final selectedMedia = await selectMedia();
-                        if (selectedMedia != null &&
-                            validateFileFormat(
-                                selectedMedia.storagePath, context)) {
-                          showUploadMessage(context, 'Uploading file...',
-                              showLoading: true);
-                          final downloadUrl = await uploadData(
-                              selectedMedia.storagePath, selectedMedia.bytes);
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          if (downloadUrl != null) {
-                            setState(() => uploadedFileUrl1 = downloadUrl);
-                            showUploadMessage(context, 'Success!');
-                          } else {
-                            showUploadMessage(
-                                context, 'Failed to upload media');
-                          }
-                        }
-                      },
-                      child: Container(
-                        width: 120,
-                        height: 120,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: Image.network(
-                          'https://picsum.photos/seed/342/600',
-                          fit: BoxFit.fill,
-                        ),
-                      ),
+                    padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    child: Text(
+                      'Upload Photos ${selectedMediaList.length}/5',
+                      style: TextStyle(color: FlutterFlowTheme.secondaryColor),
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    child: FFButtonWidget(
-                      onPressed: () async {
-                        final selectedMedia = await selectMedia();
-                        if (selectedMedia != null &&
-                            validateFileFormat(
-                                selectedMedia.storagePath, context)) {
-                          showUploadMessage(context, 'Uploading file...',
-                              showLoading: true);
-                          final downloadUrl = await uploadData(
-                              selectedMedia.storagePath, selectedMedia.bytes);
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          if (downloadUrl != null) {
-                            setState(() => uploadedFileUrl2 = downloadUrl);
-                            showUploadMessage(context, 'Success!');
-                          } else {
-                            showUploadMessage(
-                                context, 'Failed to upload media');
-                          }
-                        }
-                      },
-                      text: 'Upload Logo',
-                      options: FFButtonOptions(
-                        width: 130,
-                        height: 40,
-                        color: FlutterFlowTheme.tertiaryColor,
-                        textStyle: FlutterFlowTheme.subtitle2.override(
-                          fontFamily: 'Montserrat',
-                          color: FlutterFlowTheme.primaryColor,
-                        ),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                          width: 1,
-                        ),
-                        borderRadius: 12,
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                    child: Text(
+                      'NOTE: Uploaded images cannot be deleted!',
+                      style: TextStyle(
+                          color:
+                              FlutterFlowTheme.secondaryColor.withOpacity(0.7),
+                          fontSize: 10),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 5, 0, 10),
+                    child: Container(
+                      width: double.infinity,
+                      height: 200,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: FlutterFlowTheme.tertiaryColor, width: 2),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: selectedMediaList.isEmpty
+                            ? GestureDetector(
+                                onTap: () async {
+                                  selectedMediaList.add(await selectMedia());
+                                  setState(() {});
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(8.0),
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: FlutterFlowTheme.tertiaryColor,
+                                          width: 2),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  child: Center(
+                                      child: Icon(
+                                    Icons.add_a_photo,
+                                    color: FlutterFlowTheme.secondaryColor,
+                                  )),
+                                ),
+                              )
+                            : GridView.builder(
+                                itemCount: selectedMediaList == null
+                                    ? 1
+                                    : selectedMediaList.length < 5
+                                        ? selectedMediaList.length + 1
+                                        : 5,
+                                gridDelegate:
+                                    SliverGridDelegateWithMaxCrossAxisExtent(
+                                        maxCrossAxisExtent: 100,
+                                        mainAxisSpacing: 5,
+                                        crossAxisSpacing: 5),
+                                itemBuilder: (context, index) {
+                                  if (index == 0 &&
+                                      selectedMediaList.length < 5) {
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        selectedMediaList
+                                            .add(await selectMedia());
+                                        setState(() {});
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(8.0),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: FlutterFlowTheme
+                                                    .tertiaryColor,
+                                                width: 2),
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        child: Center(
+                                            child: Icon(
+                                          Icons.add_a_photo,
+                                          color:
+                                              FlutterFlowTheme.secondaryColor,
+                                        )),
+                                      ),
+                                    );
+                                  }
+                                  return Stack(
+                                    fit: StackFit.loose,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.primaryColor,
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 1, 0, 0),
+                                          child: Image.memory(
+                                            selectedMediaList[
+                                                    selectedMediaList.length < 5
+                                                        ? index - 1
+                                                        : index]
+                                                .bytes,
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      Align(
+                                          alignment: Alignment.topRight,
+                                          child: IconButton(
+                                              onPressed: () {
+                                                selectedMediaList.removeAt(
+                                                    selectedMediaList.length < 5
+                                                        ? index - 1
+                                                        : index);
+                                                setState(() {});
+                                              },
+                                              icon: Icon(
+                                                Icons.delete,
+                                                color: Colors.red,
+                                              ))),
+                                    ],
+                                  );
+                                }),
                       ),
                     ),
                   ),
@@ -206,7 +340,7 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                           fontFamily: 'Montserrat',
                           color: FlutterFlowTheme.tertiaryColor,
                         ),
-                        hintText: '[Some hint text...]',
+                        hintText: 'Describe your project with one line.',
                         hintStyle: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Montserrat',
                           color: FlutterFlowTheme.tertiaryColor,
@@ -302,7 +436,7 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                           fontFamily: 'Montserrat',
                           color: FlutterFlowTheme.tertiaryColor,
                         ),
-                        hintText: 'Bagui City, Benguet',
+                        hintText: 'Baguio City, Benguet',
                         hintStyle: FlutterFlowTheme.bodyText1.override(
                           fontFamily: 'Montserrat',
                           color: FlutterFlowTheme.tertiaryColor,
@@ -392,7 +526,9 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                         final name = textController1.text;
                         final dateRegistered = getCurrentTimestamp;
                         final dateUpdated = getCurrentTimestamp;
-                        final logo = uploadedFileUrl2;
+                        final logo = selectedMedia != null
+                            ? await uploadLogo()
+                            : 'https://www.gardeningknowhow.com/wp-content/uploads/2019/10/seedling-400x267.jpg';
                         final description = textController3.text;
                         final motto = textController2.text;
                         final lookingFor = textController5.text;
@@ -401,9 +537,9 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                         final isFeatured = false;
                         final trl = 0;
                         final videoUrl = '';
-                        final followerCount = 1;
-                        final applicantCount = 1;
-                        final investorCount = 1;
+                        final followerCount = 0;
+                        final applicantCount = 0;
+                        final investorCount = 0;
 
                         final startupsRecordData = {
                           ...createStartupsRecordData(
@@ -423,25 +559,16 @@ class _CreateStartupPageWidgetState extends State<CreateStartupPageWidget> {
                             applicantCount: applicantCount,
                             investorCount: investorCount,
                           ),
-                          'images': FieldValue.arrayUnion(['']),
-                          'followers':
-                              FieldValue.arrayUnion([currentUserReference]),
-                          'investors':
-                              FieldValue.arrayUnion([currentUserReference]),
-                          'applicants':
-                              FieldValue.arrayUnion([currentUserReference]),
+                          'images': await uploadPhotos(),
+                          'followers': [],
+                          'investors': [],
+                          'applicants': [],
                         };
 
                         await StartupsRecord.collection
                             .doc()
                             .set(startupsRecordData);
-                        final usersRecordData = {
-                          'follow_count': FieldValue.increment(1),
-                          'investment_count': FieldValue.increment(1),
-                          'application_count': FieldValue.increment(1),
-                        };
 
-                        await currentUserReference.update(usersRecordData);
                         await Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(

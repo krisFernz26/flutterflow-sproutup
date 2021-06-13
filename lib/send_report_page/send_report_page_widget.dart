@@ -109,6 +109,18 @@ class _SendReportPageWidgetState extends State<SendReportPageWidget> {
                   maxLines: 10,
                 ),
               ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 30),
+                  child: Text(
+                    'You\'ll receive updates through your email.',
+                    textAlign: TextAlign.center,
+                    style: FlutterFlowTheme.bodyText2.override(
+                      fontFamily: 'Montserrat',
+                      color: FlutterFlowTheme.tertiaryColor,
+                      fontWeight: FontWeight.w300,
+                    ),
+                  ),
+                ),
               FFButtonWidget(
                 onPressed: () async {
                   final user = currentUserReference;
@@ -137,6 +149,7 @@ class _SendReportPageWidgetState extends State<SendReportPageWidget> {
                 },
                 text: 'Send',
                 options: FFButtonOptions(
+                  elevation: 0.0,
                   width: 130,
                   height: 40,
                   color: Color(0x00FFFFFF),

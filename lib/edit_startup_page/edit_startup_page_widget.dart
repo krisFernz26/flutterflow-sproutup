@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../backend/firebase_storage/storage.dart';
@@ -19,8 +21,10 @@ class EditStartupPageWidget extends StatefulWidget {
 }
 
 class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
-  String uploadedFileUrl1;
-  String uploadedFileUrl2;
+  String uploadedFileUrl;
+  SelectedMedia selectedMedia;
+  List<SelectedMedia> selectedMediaList = [];
+  List<String> images = [];
   TextEditingController textController1;
   TextEditingController textController2;
   TextEditingController textController3;
@@ -38,6 +42,42 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
     textController5 = TextEditingController();
   }
 
+  Future<String> uploadLogo() async {
+    if (this.selectedMedia != null &&
+        validateFileFormat(this.selectedMedia.storagePath, context)) {
+      showUploadMessage(context, 'Uploading file...', showLoading: true);
+    }
+    final downloadUrl = await uploadData(
+        this.selectedMedia.storagePath, this.selectedMedia.bytes);
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    if (downloadUrl != null) {
+      showUploadMessage(context, 'Success!');
+      return downloadUrl;
+    } else {
+      showUploadMessage(context, 'Failed to upload media');
+      return '';
+    }
+  }
+
+  Future<List<String>> uploadPhotos() async {
+    if (selectedMediaList.isNotEmpty) {
+      return await Future.wait<String>(selectedMediaList.map((selectedMedia) async {
+        return uploadData(
+            'users/${currentUserReference.id}/${textController1.text}/images/${Uuid().v4()}',
+            selectedMedia.bytes);
+      }).toList());
+    }
+    return [];
+  }
+
+  void initializeTextControllers(StartupsRecord editStartupPageStartupsRecord) {
+    textController1.text = editStartupPageStartupsRecord.name;
+    textController2.text = editStartupPageStartupsRecord.motto;
+    textController3.text = editStartupPageStartupsRecord.description;
+    textController4.text = editStartupPageStartupsRecord.location;
+    textController5.text = editStartupPageStartupsRecord.lookingFor;
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<StartupsRecord>>(
@@ -47,20 +87,19 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
         singleRecord: true,
       ),
       builder: (context, snapshot) {
-        // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
         List<StartupsRecord> editStartupPageStartupsRecordList = snapshot.data;
-        // Customize what your widget looks like with no query results.
         if (snapshot.data.isEmpty) {
-          // return Container();
-          // For now, we'll just include some dummy data.
-          editStartupPageStartupsRecordList =
-              createDummyStartupsRecord(count: 1);
+          return Container();
         }
         final editStartupPageStartupsRecord =
             editStartupPageStartupsRecordList.first;
+
+        initializeTextControllers(editStartupPageStartupsRecord);
+        images = editStartupPageStartupsRecord.images.toList();
+
         return Scaffold(
           key: scaffoldKey,
           appBar: AppBar(
@@ -97,77 +136,189 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
                         child: InkWell(
                           onTap: () async {
-                            final selectedMedia = await selectMedia();
-                            if (selectedMedia != null &&
-                                validateFileFormat(
-                                    selectedMedia.storagePath, context)) {
-                              showUploadMessage(context, 'Uploading file...',
-                                  showLoading: true);
-                              final downloadUrl = await uploadData(
-                                  selectedMedia.storagePath,
-                                  selectedMedia.bytes);
-                              ScaffoldMessenger.of(context)
-                                  .hideCurrentSnackBar();
-                              if (downloadUrl != null) {
-                                setState(() => uploadedFileUrl1 = downloadUrl);
-                                showUploadMessage(context, 'Success!');
-                              } else {
-                                showUploadMessage(
-                                    context, 'Failed to upload media');
-                              }
-                            }
+                            selectedMedia = await selectMedia();
+                            setState(() {});
                           },
                           child: Container(
                             width: 120,
                             height: 120,
                             clipBehavior: Clip.antiAlias,
                             decoration: BoxDecoration(
-                              shape: BoxShape.circle,
+                              shape: BoxShape.rectangle,
                             ),
-                            child: Image.network(
-                              editStartupPageStartupsRecord.logo,
-                            ),
+                            child: selectedMedia == null
+                                ? Image.network(
+                                    editStartupPageStartupsRecord.logo,
+                                    fit: BoxFit.contain,
+                                  )
+                                : Image.memory(selectedMedia.bytes,fit: BoxFit.contain,),
+                                    
                           ),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                        child: FFButtonWidget(
-                          onPressed: () async {
-                            final selectedMedia = await selectMedia();
-                            if (selectedMedia != null &&
-                                validateFileFormat(
-                                    selectedMedia.storagePath, context)) {
-                              showUploadMessage(context, 'Uploading file...',
-                                  showLoading: true);
-                              final downloadUrl = await uploadData(
-                                  selectedMedia.storagePath,
-                                  selectedMedia.bytes);
-                              ScaffoldMessenger.of(context)
-                                  .hideCurrentSnackBar();
-                              if (downloadUrl != null) {
-                                setState(() => uploadedFileUrl2 = downloadUrl);
-                                showUploadMessage(context, 'Success!');
-                              } else {
-                                showUploadMessage(
-                                    context, 'Failed to upload media');
-                              }
-                            }
-                          },
-                          text: 'Upload Logo',
-                          options: FFButtonOptions(
-                            width: 130,
-                            height: 40,
-                            color: FlutterFlowTheme.tertiaryColor,
-                            textStyle: FlutterFlowTheme.subtitle2.override(
-                              fontFamily: 'Montserrat',
-                              color: FlutterFlowTheme.primaryColor,
-                            ),
-                            borderSide: BorderSide(
-                              color: Colors.transparent,
-                              width: 1,
-                            ),
-                            borderRadius: 12,
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                        child: Text(
+                          'Upload Photos ${editStartupPageStartupsRecord.images.length + selectedMediaList.length}/5',
+                          style:
+                              TextStyle(color: FlutterFlowTheme.secondaryColor),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                        child: Text(
+                          'NOTE: Uploaded images cannot be deleted!',
+                          style: TextStyle(
+                              color: FlutterFlowTheme.secondaryColor
+                                  .withOpacity(0.7),
+                              fontSize: 10),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 5, 0, 10),
+                        child: Container(
+                          width: double.infinity,
+                          height: 200,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: FlutterFlowTheme.tertiaryColor,
+                                  width: 2),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: images.isEmpty && selectedMediaList.isEmpty
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      selectedMediaList
+                                          .add(await selectMedia());
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(8.0),
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: FlutterFlowTheme
+                                                  .tertiaryColor,
+                                              width: 2),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Center(
+                                          child: Icon(
+                                        Icons.add_a_photo,
+                                        color: FlutterFlowTheme.secondaryColor,
+                                      )),
+                                    ),
+                                  )
+                                : GridView.builder(
+                                    itemCount: images.isEmpty &&
+                                            selectedMediaList.isEmpty
+                                        ? 1
+                                        : images.length < 5 ||
+                                                selectedMediaList.length < 5
+                                            ? images.length +
+                                                selectedMediaList.length +
+                                                1
+                                            : 5,
+                                    gridDelegate:
+                                        SliverGridDelegateWithMaxCrossAxisExtent(
+                                            maxCrossAxisExtent: 100,
+                                            mainAxisSpacing: 5,
+                                            crossAxisSpacing: 5),
+                                    itemBuilder: (context, index) {
+                                      if (index == 0 &&
+                                          (selectedMediaList.length < 5 &&
+                                              images.length < 5)) {
+                                        return GestureDetector(
+                                          onTap: () async {
+                                            selectedMediaList
+                                                .add(await selectMedia());
+                                            setState(() {});
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(8.0),
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: FlutterFlowTheme
+                                                        .tertiaryColor,
+                                                    width: 2),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Center(
+                                                child: Icon(
+                                              Icons.add_a_photo,
+                                              color: FlutterFlowTheme
+                                                  .secondaryColor,
+                                            )),
+                                          ),
+                                        );
+                                      }
+                                      return Stack(
+                                        fit: StackFit.loose,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  FlutterFlowTheme.primaryColor,
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  0, 1, 0, 0),
+                                              child: index <= images.length
+                                                  ? Image.network(
+                                                      images[images.length < 5
+                                                          ? index - 1
+                                                          : index],
+                                                      width: 100,
+                                                      height: 100,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : Image.memory(
+                                                      selectedMediaList[
+                                                              selectedMediaList
+                                                                          .length <
+                                                                      5
+                                                                  ? index -
+                                                                      1 -
+                                                                      images
+                                                                          .length
+                                                                  : index -
+                                                                      images
+                                                                          .length]
+                                                          .bytes,
+                                                      width: 100,
+                                                      height: 100,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                            ),
+                                          ),
+                                          Align(
+                                              alignment: Alignment.topRight,
+                                              child: index <= images.length
+                                                  ? Container()
+                                                  : IconButton(
+                                                      onPressed: () {
+                                                        selectedMediaList.removeAt(
+                                                            selectedMediaList
+                                                                        .length <
+                                                                    5
+                                                                ? index -
+                                                                    1 -
+                                                                    images
+                                                                        .length
+                                                                : index -
+                                                                    images
+                                                                        .length);
+                                                        setState(() {});
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red,
+                                                      ))),
+                                        ],
+                                      );
+                                    }),
                           ),
                         ),
                       ),
@@ -182,7 +333,7 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
                             ),
-                            hintText: 'SproutUp',
+                            hintText: editStartupPageStartupsRecord.name,
                             hintStyle: FlutterFlowTheme.bodyText1.override(
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
@@ -229,7 +380,7 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
                             ),
-                            hintText: '[Some hint text...]',
+                            hintText: editStartupPageStartupsRecord.motto,
                             hintStyle: FlutterFlowTheme.bodyText1.override(
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
@@ -277,7 +428,7 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
                             ),
-                            hintText: 'Describe your Startup/Project....',
+                            hintText: editStartupPageStartupsRecord.description,
                             hintStyle: FlutterFlowTheme.bodyText1.override(
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
@@ -325,7 +476,7 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
                             ),
-                            hintText: 'Bagui City, Benguet',
+                            hintText: editStartupPageStartupsRecord.location,
                             hintStyle: FlutterFlowTheme.bodyText1.override(
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
@@ -372,7 +523,7 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
                             ),
-                            hintText: 'Flutter Developer',
+                            hintText: editStartupPageStartupsRecord.lookingFor,
                             hintStyle: FlutterFlowTheme.bodyText1.override(
                               fontFamily: 'Montserrat',
                               color: FlutterFlowTheme.tertiaryColor,
@@ -414,13 +565,16 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                           onPressed: () async {
                             final name = textController1.text;
                             final dateUpdated = getCurrentTimestamp;
-                            final logo = uploadedFileUrl2;
+                            final logo = selectedMedia == null
+                                ? editStartupPageStartupsRecord.logo
+                                : await uploadLogo();
                             final description = textController3.text;
                             final motto = textController2.text;
                             final lookingFor = textController5.text;
                             final location = textController4.text;
 
-                            final startupsRecordData = createStartupsRecordData(
+                            final startupsRecordData = {
+                              ...createStartupsRecordData(
                               name: name,
                               dateUpdated: dateUpdated,
                               logo: logo,
@@ -428,7 +582,8 @@ class _EditStartupPageWidgetState extends State<EditStartupPageWidget> {
                               motto: motto,
                               lookingFor: lookingFor,
                               location: location,
-                            );
+                            ), 
+                            'images': FieldValue.arrayUnion(await uploadPhotos())};
 
                             await editStartupPageStartupsRecord.reference
                                 .update(startupsRecordData);

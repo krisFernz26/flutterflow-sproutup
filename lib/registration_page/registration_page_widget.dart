@@ -1,3 +1,4 @@
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../backend/firebase_storage/storage.dart';
@@ -19,8 +20,8 @@ class RegistrationPageWidget extends StatefulWidget {
 }
 
 class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
-  String uploadedFileUrl1;
-  String uploadedFileUrl2;
+  String uploadedFileUrl;
+  SelectedMedia selectedMedia;
   TextEditingController emailTextController;
   TextEditingController passwordTextController;
   TextEditingController confirmPasswordTextController;
@@ -36,6 +37,24 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
     passwordTextController = TextEditingController();
     textController2 = TextEditingController();
     textController3 = TextEditingController();
+  }
+
+  Future<String> uploadPhoto() async {
+    if (this.selectedMedia != null &&
+        validateFileFormat(this.selectedMedia.storagePath, context)) {
+      showUploadMessage(context, 'Uploading file...', showLoading: true);
+      final downloadUrl =
+          await uploadData(selectedMedia.storagePath, selectedMedia.bytes);
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      if (downloadUrl != null) {
+        showUploadMessage(context, 'Success!');
+        return downloadUrl;
+      } else {
+        showUploadMessage(context, 'Failed to upload media');
+        return '';
+      }
+    }
+    return null;
   }
 
   @override
@@ -98,27 +117,13 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                       ),
                     ),
                   ),
-                  Padding(
+                  selectedMedia == null ? Container() : Padding(
                     padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
                     child: InkWell(
                       onTap: () async {
-                        final selectedMedia = await selectMedia();
-                        if (selectedMedia != null &&
-                            validateFileFormat(
-                                selectedMedia.storagePath, context)) {
-                          showUploadMessage(context, 'Uploading file...',
-                              showLoading: true);
-                          final downloadUrl = await uploadData(
-                              selectedMedia.storagePath, selectedMedia.bytes);
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          if (downloadUrl != null) {
-                            setState(() => uploadedFileUrl1 = downloadUrl);
-                            showUploadMessage(context, 'Success!');
-                          } else {
-                            showUploadMessage(
-                                context, 'Failed to upload media');
-                          }
-                        }
+                          selectedMedia = await selectMedia();
+                          setState(() {});
+                        
                       },
                       child: Container(
                         width: 100,
@@ -127,34 +132,19 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                         ),
-                        child: CachedNetworkImage(
-                          imageUrl: 'https://picsum.photos/seed/936/600',
-                          fit: BoxFit.contain,
+                        child: Image.memory(
+                          selectedMedia.bytes,
+                          fit: BoxFit.fitWidth,
                         ),
                       ),
                     ),
                   ),
-                  Padding(
+                  selectedMedia != null ? Container() : Padding(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                     child: FFButtonWidget(
                       onPressed: () async {
-                        final selectedMedia = await selectMedia();
-                        if (selectedMedia != null &&
-                            validateFileFormat(
-                                selectedMedia.storagePath, context)) {
-                          showUploadMessage(context, 'Uploading file...',
-                              showLoading: true);
-                          final downloadUrl = await uploadData(
-                              selectedMedia.storagePath, selectedMedia.bytes);
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          if (downloadUrl != null) {
-                            setState(() => uploadedFileUrl2 = downloadUrl);
-                            showUploadMessage(context, 'Success!');
-                          } else {
-                            showUploadMessage(
-                                context, 'Failed to upload media');
-                          }
-                        }
+                        selectedMedia = await selectMedia();
+                        setState(() {});
                       },
                       text: 'Upload Profile Photo',
                       icon: Icon(
@@ -439,6 +429,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                           emailTextController.text,
                           passwordTextController.text,
                         );
+                        
                         if (user == null) {
                           return;
                         }
@@ -447,7 +438,7 @@ class _RegistrationPageWidgetState extends State<RegistrationPageWidget> {
                         final email = emailTextController.text;
                         final dateLastLoggedIn = getCurrentTimestamp;
                         final displayName = textController2.text;
-                        final photoUrl = uploadedFileUrl2;
+                        final photoUrl = selectedMedia != null ? await uploadPhoto() : 'https://www.gardeningknowhow.com/wp-content/uploads/2019/10/seedling-400x267.jpg';
                         final createdTime = getCurrentTimestamp;
                         final investmentCount = 0;
                         final followCount = 0;

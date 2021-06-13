@@ -1,3 +1,8 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:sprout_up/backend/firebase_storage/storage.dart';
+import 'package:sprout_up/flutter_flow/upload_media.dart';
+import 'package:uuid/uuid.dart';
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -18,6 +23,7 @@ class CreatePostPageWidget extends StatefulWidget {
 class _CreatePostPageWidgetState extends State<CreatePostPageWidget> {
   TextEditingController textController1;
   TextEditingController textController2;
+  List<SelectedMedia> selectedMediaList = [];
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -25,6 +31,33 @@ class _CreatePostPageWidgetState extends State<CreatePostPageWidget> {
     super.initState();
     textController1 = TextEditingController();
     textController2 = TextEditingController();
+  }
+
+  Future<List<String>> uploadPhotos() async {
+    if (selectedMediaList.isNotEmpty) {
+      return await Future.wait<String>(selectedMediaList.map((selectedMedia) async {
+        return uploadData(
+            'users/${currentUserReference.id}/${textController1.text}/images/${Uuid().v4()}',
+            selectedMedia.bytes);
+      }).toList());
+    }
+    return [];
+  }
+
+  Future<String> uploadThumbnail() async {
+    if (selectedMediaList.isNotEmpty) {
+      if (selectedMediaList[0] != null &&
+          validateFileFormat(selectedMediaList[0].storagePath, context)) {
+        final downloadUrl = await uploadData(
+            'users/${currentUserReference.id}/${textController1.text}/thumbnail/${Uuid().v4()}',
+            selectedMediaList[0].bytes);
+        if (downloadUrl != null) {
+          return downloadUrl;
+        } else {
+          return '';
+        }
+      }
+    }
   }
 
   @override
@@ -36,15 +69,12 @@ class _CreatePostPageWidgetState extends State<CreatePostPageWidget> {
         singleRecord: true,
       ),
       builder: (context, snapshot) {
-        // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
         List<StartupsRecord> createPostPageStartupsRecordList = snapshot.data;
-        // Customize what your widget looks like with no query results.
+
         if (snapshot.data.isEmpty) {
-          // return Container();
-          // For now, we'll just include some dummy data.
           createPostPageStartupsRecordList =
               createDummyStartupsRecord(count: 1);
         }
@@ -82,6 +112,144 @@ class _CreatePostPageWidgetState extends State<CreatePostPageWidget> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                        child: Text(
+                          'Upload Photos ${selectedMediaList.length}/5',
+                          style:
+                              TextStyle(color: FlutterFlowTheme.secondaryColor),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                        child: Text(
+                          'NOTE: Uploaded images cannot be deleted!',
+                          style:
+                              TextStyle(color: FlutterFlowTheme.secondaryColor.withOpacity(0.7), fontSize: 10),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 5, 0, 10),
+                        child: Container(
+                          width: double.infinity,
+                          height: 200,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: FlutterFlowTheme.tertiaryColor,
+                                  width: 2),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: selectedMediaList.isEmpty
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      selectedMediaList
+                                          .add(await selectMedia());
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(8.0),
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: FlutterFlowTheme
+                                                  .tertiaryColor,
+                                              width: 2),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Center(
+                                          child: Icon(
+                                        Icons.add_a_photo,
+                                        color: FlutterFlowTheme.secondaryColor,
+                                      )),
+                                    ),
+                                  )
+                                : GridView.builder(
+                                    itemCount: selectedMediaList == null
+                                        ? 1
+                                        : selectedMediaList.length < 5
+                                            ? selectedMediaList.length + 1
+                                            : 5,
+                                    gridDelegate:
+                                        SliverGridDelegateWithMaxCrossAxisExtent(
+                                            maxCrossAxisExtent: 100,
+                                            mainAxisSpacing: 5,
+                                            crossAxisSpacing: 5),
+                                    itemBuilder: (context, index) {
+                                      if (index == 0 &&
+                                          selectedMediaList.length < 5) {
+                                        return GestureDetector(
+                                          onTap: () async {
+                                            selectedMediaList
+                                                .add(await selectMedia());
+                                            setState(() {});
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(8.0),
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: FlutterFlowTheme
+                                                        .tertiaryColor,
+                                                    width: 2),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Center(
+                                                child: Icon(
+                                              Icons.add_a_photo,
+                                              color: FlutterFlowTheme
+                                                  .secondaryColor,
+                                            )),
+                                          ),
+                                        );
+                                      }
+                                      return Stack(
+                                        fit: StackFit.loose,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  FlutterFlowTheme.primaryColor,
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  0, 1, 0, 0),
+                                              child: Image.memory(
+                                                selectedMediaList[
+                                                        selectedMediaList
+                                                                    .length <
+                                                                5
+                                                            ? index - 1
+                                                            : index]
+                                                    .bytes,
+                                                width: 100,
+                                                height: 100,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          Align(
+                                              alignment: Alignment.topRight,
+                                              child: IconButton(
+                                                  onPressed: () {
+                                                    selectedMediaList.removeAt(
+                                                        selectedMediaList
+                                                                    .length <
+                                                                5
+                                                            ? index - 1
+                                                            : index);
+                                                    setState(() {});
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ))),
+                                        ],
+                                      );
+                                    }),
+                          ),
+                        ),
+                      ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                         child: TextFormField(
@@ -177,65 +345,63 @@ class _CreatePostPageWidgetState extends State<CreatePostPageWidget> {
                           maxLines: 10,
                         ),
                       ),
-                      FFButtonWidget(
-                        onPressed: () async {
-                          final title = textController1.text;
-                          final user = currentUserReference;
-                          final startup =
-                              createPostPageStartupsRecord.reference;
-                          final body = textController2.text;
-                          final datePosted = getCurrentTimestamp;
-                          final dateUpdated = getCurrentTimestamp;
-                          final likesCount = 1;
-                          final thumbnail = '';
+                      Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: FFButtonWidget(
+                          onPressed: () async {
+                            final title = textController1.text;
+                            final user = currentUserReference;
+                            final startup =
+                                createPostPageStartupsRecord.reference;
+                            final body = textController2.text;
+                            final datePosted = getCurrentTimestamp;
+                            final dateUpdated = getCurrentTimestamp;
+                            final likesCount = 0;
+                            final thumbnail = await uploadThumbnail();
 
-                          final postsRecordData = {
-                            ...createPostsRecordData(
-                              title: title,
-                              user: user,
-                              startup: startup,
-                              body: body,
-                              datePosted: datePosted,
-                              dateUpdated: dateUpdated,
-                              likesCount: likesCount,
-                              thumbnail: thumbnail,
+                            final postsRecordData = {
+                              ...createPostsRecordData(
+                                title: title,
+                                user: user,
+                                startup: startup,
+                                body: body,
+                                datePosted: datePosted,
+                                dateUpdated: dateUpdated,
+                                likesCount: likesCount,
+                                thumbnail: thumbnail,
+                              ),
+                              'images': await uploadPhotos(),
+                              'liked_users': [],
+                            };
+
+                            await PostsRecord.collection
+                                .doc()
+                                .set(postsRecordData);
+
+                            await Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    NavBarPage(initialPage: 'ExplorePage'),
+                              ),
+                              (r) => false,
+                            );
+                          },
+                          text: 'Post',
+                          options: FFButtonOptions(
+                            width: 130,
+                            height: 40,
+                            color: FlutterFlowTheme.tertiaryColor,
+                            textStyle: FlutterFlowTheme.subtitle2.override(
+                              fontFamily: 'Montserrat',
+                              color: FlutterFlowTheme.primaryColor,
                             ),
-                            'images': FieldValue.arrayUnion(['']),
-                            'liked_users':
-                                FieldValue.arrayUnion([currentUserReference]),
-                          };
-
-                          await PostsRecord.collection
-                              .doc()
-                              .set(postsRecordData);
-                          final usersRecordData = {
-                            'likes_count': FieldValue.increment(1),
-                          };
-
-                          await currentUserReference.update(usersRecordData);
-                          await Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  NavBarPage(initialPage: 'ExplorePage'),
+                            borderSide: BorderSide(
+                              color: Colors.transparent,
+                              width: 1,
                             ),
-                            (r) => false,
-                          );
-                        },
-                        text: 'Post',
-                        options: FFButtonOptions(
-                          width: 130,
-                          height: 40,
-                          color: FlutterFlowTheme.tertiaryColor,
-                          textStyle: FlutterFlowTheme.subtitle2.override(
-                            fontFamily: 'Montserrat',
-                            color: FlutterFlowTheme.primaryColor,
+                            borderRadius: 120,
                           ),
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                            width: 1,
-                          ),
-                          borderRadius: 120,
                         ),
                       )
                     ],

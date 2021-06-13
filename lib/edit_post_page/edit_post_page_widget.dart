@@ -1,3 +1,8 @@
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:sprout_up/backend/firebase_storage/storage.dart';
+import 'package:sprout_up/flutter_flow/upload_media.dart';
+import 'package:uuid/uuid.dart';
+
 import '../auth/auth_util.dart';
 import '../backend/backend.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -23,6 +28,8 @@ class EditPostPageWidget extends StatefulWidget {
 class _EditPostPageWidgetState extends State<EditPostPageWidget> {
   TextEditingController textController1;
   TextEditingController textController2;
+  List<SelectedMedia> selectedMediaList = [];
+  List<String> images = [];
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -30,6 +37,39 @@ class _EditPostPageWidgetState extends State<EditPostPageWidget> {
     super.initState();
     textController1 = TextEditingController(text: widget.post.title);
     textController2 = TextEditingController(text: widget.post.body);
+  }
+
+  void initializeTextControllers(PostsRecord postsRecord) {
+    textController1.text = postsRecord.title;
+    textController2.text = postsRecord.body;
+  }
+
+  Future<List<String>> uploadPhotos() async {
+    if (selectedMediaList.isNotEmpty) {
+      return await Future.wait<String>(
+          selectedMediaList.map((selectedMedia) async {
+        return uploadData(
+            'users/${currentUserReference.id}/${textController1.text}/images/${Uuid().v4()}',
+            selectedMedia.bytes);
+      }).toList());
+    }
+    return [];
+  }
+
+  Future<String> uploadThumbnail() async {
+    if (selectedMediaList.isNotEmpty) {
+      if (selectedMediaList[0] != null &&
+          validateFileFormat(selectedMediaList[0].storagePath, context)) {
+        final downloadUrl = await uploadData(
+            'users/${currentUserReference.id}/${textController1.text}/thumbnail/${Uuid().v4()}',
+            selectedMediaList[0].bytes);
+        if (downloadUrl != null) {
+          return downloadUrl;
+        } else {
+          return '';
+        }
+      }
+    }
   }
 
   @override
@@ -41,18 +81,17 @@ class _EditPostPageWidgetState extends State<EditPostPageWidget> {
         singleRecord: true,
       ),
       builder: (context, snapshot) {
-        // Customize what your widget looks like when it's loading.
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         }
         List<StartupsRecord> editPostPageStartupsRecordList = snapshot.data;
-        // Customize what your widget looks like with no query results.
+
         if (snapshot.data.isEmpty) {
-          // return Container();
-          // For now, we'll just include some dummy data.
           editPostPageStartupsRecordList = createDummyStartupsRecord(count: 1);
         }
+
         final editPostPageStartupsRecord = editPostPageStartupsRecordList.first;
+        images = widget.post.images.toList();
         return Scaffold(
           key: scaffoldKey,
           appBar: AppBar(
@@ -85,6 +124,172 @@ class _EditPostPageWidgetState extends State<EditPostPageWidget> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                        child: Text(
+                          'Upload Photos ${widget.post.images.length + selectedMediaList.length}/5',
+                          style:
+                              TextStyle(color: FlutterFlowTheme.secondaryColor),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                        child: Text(
+                          'NOTE: Uploaded images cannot be deleted!',
+                          style: TextStyle(
+                              color: FlutterFlowTheme.secondaryColor
+                                  .withOpacity(0.7),
+                              fontSize: 10),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 5, 0, 10),
+                        child: Container(
+                          width: double.infinity,
+                          height: 200,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: FlutterFlowTheme.tertiaryColor,
+                                  width: 2),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: images.isEmpty && selectedMediaList.isEmpty
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      selectedMediaList
+                                          .add(await selectMedia());
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(8.0),
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: FlutterFlowTheme
+                                                  .tertiaryColor,
+                                              width: 2),
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      child: Center(
+                                          child: Icon(
+                                        Icons.add_a_photo,
+                                        color: FlutterFlowTheme.secondaryColor,
+                                      )),
+                                    ),
+                                  )
+                                : GridView.builder(
+                                    itemCount: images.isEmpty &&
+                                            selectedMediaList.isEmpty
+                                        ? 1
+                                        : images.length < 5 ||
+                                                selectedMediaList.length < 5
+                                            ? images.length +
+                                                selectedMediaList.length +
+                                                1
+                                            : 5,
+                                    gridDelegate:
+                                        SliverGridDelegateWithMaxCrossAxisExtent(
+                                            maxCrossAxisExtent: 100,
+                                            mainAxisSpacing: 5,
+                                            crossAxisSpacing: 5),
+                                    itemBuilder: (context, index) {
+                                      if (index == 0 &&
+                                          (selectedMediaList.length < 5 &&
+                                              images.length < 5)) {
+                                        return GestureDetector(
+                                          onTap: () async {
+                                            selectedMediaList
+                                                .add(await selectMedia());
+                                            setState(() {});
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(8.0),
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: FlutterFlowTheme
+                                                        .tertiaryColor,
+                                                    width: 2),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Center(
+                                                child: Icon(
+                                              Icons.add_a_photo,
+                                              color: FlutterFlowTheme
+                                                  .secondaryColor,
+                                            )),
+                                          ),
+                                        );
+                                      }
+                                      return Stack(
+                                        fit: StackFit.loose,
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  FlutterFlowTheme.primaryColor,
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  0, 1, 0, 0),
+                                              child: index <= images.length
+                                                  ? Image.network(
+                                                      images[images.length < 5
+                                                          ? index - 1
+                                                          : index],
+                                                      width: 100,
+                                                      height: 100,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : Image.memory(
+                                                      selectedMediaList[
+                                                              selectedMediaList
+                                                                          .length <
+                                                                      5
+                                                                  ? index -
+                                                                      1 -
+                                                                      images
+                                                                          .length
+                                                                  : index -
+                                                                      images
+                                                                          .length]
+                                                          .bytes,
+                                                      width: 100,
+                                                      height: 100,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                            ),
+                                          ),
+                                          Align(
+                                              alignment: Alignment.topRight,
+                                              child: index <= images.length
+                                                  ? Container()
+                                                  : IconButton(
+                                                      onPressed: () {
+                                                        selectedMediaList.removeAt(
+                                                            selectedMediaList
+                                                                        .length <
+                                                                    5
+                                                                ? index -
+                                                                    1 -
+                                                                    images
+                                                                        .length
+                                                                : index -
+                                                                    images
+                                                                        .length);
+                                                        setState(() {});
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red,
+                                                      ))),
+                                        ],
+                                      );
+                                    }),
+                          ),
+                        ),
+                      ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                         child: TextFormField(
@@ -187,12 +392,16 @@ class _EditPostPageWidgetState extends State<EditPostPageWidget> {
                           final startup = editPostPageStartupsRecord.reference;
                           final dateUpdated = getCurrentTimestamp;
 
-                          final postsRecordData = createPostsRecordData(
-                            title: title,
-                            body: body,
-                            startup: startup,
-                            dateUpdated: dateUpdated,
-                          );
+                          final postsRecordData = {
+                            ...createPostsRecordData(
+                              title: title,
+                              body: body,
+                              startup: startup,
+                              dateUpdated: dateUpdated,
+                            ),
+                            'images':
+                                FieldValue.arrayUnion(await uploadPhotos())
+                          };
 
                           await widget.post.reference.update(postsRecordData);
                           await Navigator.pushAndRemoveUntil(

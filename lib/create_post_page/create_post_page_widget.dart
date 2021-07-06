@@ -396,14 +396,7 @@ class _CreatePostPageWidgetState extends State<CreatePostPageWidget> {
                                   .doc()
                                   .set(postsRecordData);
                   
-                              await Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      NavBarPage(initialPage: 'ExplorePage'),
-                                ),
-                                (r) => false,
-                              );
+                              await Navigator.of(context).pop();
                             }},
                             text: 'Post',
                             options: FFButtonOptions(

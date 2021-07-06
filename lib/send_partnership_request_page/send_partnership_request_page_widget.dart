@@ -28,6 +28,7 @@ class _SendPartnershipRequestPageWidgetState
     extends State<SendPartnershipRequestPageWidget> {
   TextEditingController textController;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -63,140 +64,156 @@ class _SendPartnershipRequestPageWidgetState
             color: FlutterFlowTheme.primaryColor,
           ),
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  child: AutoSizeText(
-                    widget.startup.name,
-                    style: FlutterFlowTheme.title1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.secondaryColor,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    child: AutoSizeText(
+                      widget.startup.name,
+                      style: FlutterFlowTheme.title1.override(
+                        fontFamily: 'Montserrat',
+                        color: FlutterFlowTheme.secondaryColor,
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                  child: TextFormField(
-                    controller: textController,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      labelText: 'Message',
-                      labelStyle: FlutterFlowTheme.bodyText1.override(
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                    child: TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a message';
+                        }
+                        return null;
+                      },
+                      controller: textController,
+                      obscureText: false,
+                      decoration: InputDecoration(
+                        labelText: 'Message',
+                        labelStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.tertiaryColor,
+                        ),
+                        hintText:
+                            'State your reasons for wanting to partner with this startup.',
+                        hintStyle: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.tertiaryColor.withOpacity(0.6),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: FlutterFlowTheme.tertiaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(10),
+                            bottomRight: Radius.circular(10),
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                        ),
+                      ),
+                      style: FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Montserrat',
                         color: FlutterFlowTheme.tertiaryColor,
                       ),
-                      hintText:
-                          'State your reasons for wanting to partner with this startup.',
-                      hintStyle: FlutterFlowTheme.bodyText1.override(
+                      maxLines: 10,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 30),
+                    child: Text(
+                      'SproutUp handles requests  as messages. Once you hit the send button, you\'ll be sending this message as your first message to this startup.',
+                      textAlign: TextAlign.center,
+                      style: FlutterFlowTheme.bodyText2.override(
                         fontFamily: 'Montserrat',
                         color: FlutterFlowTheme.tertiaryColor,
+                        fontWeight: FontWeight.w300,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: FlutterFlowTheme.tertiaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                        ),
-                      ),
-                    ),
-                    style: FlutterFlowTheme.bodyText1.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.tertiaryColor,
-                    ),
-                    maxLines: 10,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 30),
-                  child: Text(
-                    'SproutUp handles requests  as messages. Once you hit the send button, you\'ll be sending this message as your first message to this startup.',
-                    textAlign: TextAlign.center,
-                    style: FlutterFlowTheme.bodyText2.override(
-                      fontFamily: 'Montserrat',
-                      color: FlutterFlowTheme.tertiaryColor,
-                      fontWeight: FontWeight.w300,
                     ),
                   ),
-                ),
-                FFButtonWidget(
-                  onPressed: () async {
-                    final dateCreated = getCurrentTimestamp;
-                    final purpose = 'Partnership';
-          
-                    final roomsRecordData = {
-                      ...createRoomsRecordData(
-                        dateCreated: dateCreated,
-                        purpose: purpose,
+                  FFButtonWidget(
+                    onPressed: () async {
+                      if (_formKey.currentState.validate()) {
+                        final dateCreated = getCurrentTimestamp;
+                        final purpose = 'Partnership';
+
+                        final roomsRecordData = {
+                          ...createRoomsRecordData(
+                            dateCreated: dateCreated,
+                            purpose: purpose,
+                          ),
+                          'users': FieldValue.arrayUnion([
+                            widget.startup.userRegisterer,
+                            currentUserReference
+                          ]),
+                          'startups':
+                              FieldValue.arrayUnion([widget.startup.reference]),
+                        };
+                        final roomId = Uuid().v4();
+                        await RoomsRecord.collection
+                            .doc(roomId)
+                            .set(roomsRecordData);
+                        final author = currentUserReference;
+                        final text = textController.text;
+                        final image = '';
+                        final video = '';
+                        final dateSent = getCurrentTimestamp;
+
+                        final messagesRecordData = createMessagesRecordData(
+                            author: author,
+                            text: text,
+                            image: image,
+                            video: video,
+                            dateSent: dateSent,
+                            room: RoomsRecord.collection.doc(roomId));
+
+                        await MessagesRecord.collection
+                            .doc()
+                            .set(messagesRecordData);
+                        await Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                NavBarPage(initialPage: 'InboxPage'),
+                          ),
+                          (r) => false,
+                        );
+                      }
+                    },
+                    text: 'Send Request',
+                    options: FFButtonOptions(
+                      width: 130,
+                      height: 40,
+                      color: Color(0x00FFFFFF),
+                      textStyle: FlutterFlowTheme.subtitle2.override(
+                        fontFamily: 'Montserrat',
+                        color: Colors.white,
                       ),
-                      'users':
-                          FieldValue.arrayUnion([widget.startup.userRegisterer, currentUserReference]),
-                      'startups':
-                          FieldValue.arrayUnion([widget.startup.reference]),
-                    };
-                    final roomId = Uuid().v4();
-                    await RoomsRecord.collection.doc(roomId).set(roomsRecordData);
-                    final author = currentUserReference;
-                    final text = textController.text;
-                    final image = '';
-                    final video = '';
-                    final dateSent = getCurrentTimestamp;
-          
-                    final messagesRecordData = createMessagesRecordData(
-                      author: author,
-                      text: text,
-                      image: image,
-                      video: video,
-                      dateSent: dateSent,
-                      room: RoomsRecord.collection.doc(roomId)
-                    );
-          
-                    await MessagesRecord.collection.doc().set(messagesRecordData);
-                    await Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            NavBarPage(initialPage: 'InboxPage'),
+                      borderSide: BorderSide(
+                        color: FlutterFlowTheme.tertiaryColor,
+                        width: 1,
                       ),
-                      (r) => false,
-                    );
-                  },
-                  text: 'Send Request',
-                  options: FFButtonOptions(
-                    width: 130,
-                    height: 40,
-                    color: Color(0x00FFFFFF),
-                    textStyle: FlutterFlowTheme.subtitle2.override(
-                      fontFamily: 'Montserrat',
-                      color: Colors.white,
+                      borderRadius: 120,
                     ),
-                    borderSide: BorderSide(
-                      color: FlutterFlowTheme.tertiaryColor,
-                      width: 1,
-                    ),
-                    borderRadius: 120,
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
         ),

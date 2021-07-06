@@ -26,6 +26,7 @@ class SendDonationPageWidget extends StatefulWidget {
 class _SendDonationPageWidgetState extends State<SendDonationPageWidget> {
   TextEditingController textController;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -78,6 +79,12 @@ class _SendDonationPageWidgetState extends State<SendDonationPageWidget> {
                 Padding(
                   padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                   child: TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a message';
+                      }
+                      return null;
+                    },
                     controller: textController,
                     obscureText: false,
                     decoration: InputDecoration(
@@ -90,7 +97,7 @@ class _SendDonationPageWidgetState extends State<SendDonationPageWidget> {
                           'State your reasons for wanting to fund this project, and how much you want to give.',
                       hintStyle: FlutterFlowTheme.bodyText1.override(
                         fontFamily: 'Montserrat',
-                        color: FlutterFlowTheme.tertiaryColor,
+                        color: FlutterFlowTheme.tertiaryColor.withOpacity(0.6),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
@@ -138,46 +145,51 @@ class _SendDonationPageWidgetState extends State<SendDonationPageWidget> {
                 ),
                 FFButtonWidget(
                   onPressed: () async {
-                    final dateCreated = getCurrentTimestamp;
+                    if(_formKey.currentState.validate()){final dateCreated = getCurrentTimestamp;
                     final purpose = 'Donation';
-          
+
                     final roomsRecordData = {
                       ...createRoomsRecordData(
                         dateCreated: dateCreated,
                         purpose: purpose,
                       ),
-                      'users':
-                          FieldValue.arrayUnion([widget.startup.userRegisterer, currentUserReference]),
+                      'users': FieldValue.arrayUnion([
+                        widget.startup.userRegisterer,
+                        currentUserReference
+                      ]),
                       'startups':
                           FieldValue.arrayUnion([widget.startup.reference]),
                     };
-          
+
                     final roomId = Uuid().v4();
-                    await RoomsRecord.collection.doc(roomId).set(roomsRecordData);
+                    await RoomsRecord.collection
+                        .doc(roomId)
+                        .set(roomsRecordData);
                     final author = currentUserReference;
                     final text = textController.text;
                     final image = '';
                     final video = '';
                     final dateSent = getCurrentTimestamp;
-          
+
                     final messagesRecordData = createMessagesRecordData(
-                      author: author,
-                      text: text,
-                      image: image,
-                      video: video,
-                      dateSent: dateSent,
-                      room: RoomsRecord.collection.doc(roomId)
-                    );
+                        author: author,
+                        text: text,
+                        image: image,
+                        video: video,
+                        dateSent: dateSent,
+                        room: RoomsRecord.collection.doc(roomId));
 
                     final startupsRecordData = {
                       "investor_count": FieldValue.increment(1),
                     };
-          
+
                     await StartupsRecord.collection
                         .doc(widget.startup.reference.id)
                         .update(startupsRecordData);
-                        
-                    await MessagesRecord.collection.doc().set(messagesRecordData);
+
+                    await MessagesRecord.collection
+                        .doc()
+                        .set(messagesRecordData);
                     await Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
@@ -186,7 +198,7 @@ class _SendDonationPageWidgetState extends State<SendDonationPageWidget> {
                       ),
                       (r) => false,
                     );
-                  },
+                  }},
                   text: 'Send Request',
                   options: FFButtonOptions(
                     width: 130,

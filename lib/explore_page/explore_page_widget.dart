@@ -25,6 +25,8 @@ class ExplorePageWidget extends StatefulWidget {
 class _ExplorePageWidgetState extends State<ExplorePageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
+  void showAlertDialog() {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -396,12 +398,46 @@ class _ExplorePageWidgetState extends State<ExplorePageWidget> {
                                                                           currentUserReference
                                                                       ? IconButton(
                                                                           onPressed:
-                                                                              () async {
-                                                                            await listViewPostsRecord.reference.delete();
+                                                                              () {
+                                                                            Widget
+                                                                                cancelButton =
+                                                                                FlatButton(
+                                                                              child: Text("Cancel"),
+                                                                              onPressed: () {
+                                                                                Navigator.of(context).pop();
+                                                                              },
+                                                                            );
+                                                                            Widget
+                                                                                continueButton =
+                                                                                FlatButton(
+                                                                              child: Text("Continue"),
+                                                                              onPressed: () async {
+                                                                                await listViewPostsRecord.reference.delete();
+                                                                                Navigator.of(context).pop();
+                                                                              },
+                                                                            );
+
+                                                                            AlertDialog
+                                                                                alert =
+                                                                                AlertDialog(
+                                                                              title: Text("Delete Post?"),
+                                                                              content: Text("Are you sure you want to delete this Post?"),
+                                                                              actions: [
+                                                                                cancelButton,
+                                                                                continueButton,
+                                                                              ],
+                                                                            );
+
+                                                                            showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return alert;
+                                                                              },
+                                                                            );
                                                                           },
                                                                           icon:
                                                                               Icon(
-                                                                             Icons.delete_forever,
+                                                                            Icons.delete_forever,
                                                                             color:
                                                                                 FlutterFlowTheme.tertiaryColor,
                                                                             size:

@@ -49,28 +49,25 @@ bool validateFileFormat(String filePath, BuildContext context) {
 
 String storagePath(String uid, String filePath, bool isVideo) {
   final timestamp = DateTime.now().microsecondsSinceEpoch;
-  // Workaround fixed by https://github.com/flutter/plugins/pull/3685
-  // (not yet in stable).
   final ext = isVideo ? 'mp4' : filePath.split('.').last;
   return 'users/$uid/uploads/$timestamp.$ext';
 }
 
 void showUploadMessage(BuildContext context, String message,
     {bool showLoading = false}) {
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            if (showLoading)
-              Padding(
-                padding: EdgeInsets.only(right: 10.0),
-                child: CircularProgressIndicator(),
-              ),
-            Text(message),
-          ],
-        ),
+  ScaffoldMessenger.of(context)..hideCurrentSnackBar()
+  ..showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          if (showLoading)
+            Padding(
+              padding: EdgeInsets.only(right: 10.0),
+              child: CircularProgressIndicator(),
+            ),
+          Text(message),
+        ],
       ),
-    );
+    ),
+  );
 }

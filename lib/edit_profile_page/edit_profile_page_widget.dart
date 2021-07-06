@@ -30,6 +30,7 @@ class _EditProfilePageWidgetState extends State<EditProfilePageWidget> {
   TextEditingController textController1;
   TextEditingController textController2;
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -87,263 +88,277 @@ class _EditProfilePageWidgetState extends State<EditProfilePageWidget> {
           child: Padding(
             padding: EdgeInsets.fromLTRB(50, 0, 50, 0),
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 5, 0, 2),
-                    child: AutoSizeText(
-                      '* Required fields',
-                      textAlign: TextAlign.center,
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: FlutterFlowTheme.tertiaryColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    child: InkWell(
-                      onTap: () async {
-                        selectedMedia = await selectMedia();
-                        setState(() {});
-                      },
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: Image.network(
-                          widget.user.photoUrl,
-                          fit: BoxFit.contain,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 5, 0, 2),
+                      child: AutoSizeText(
+                        '* Required fields',
+                        textAlign: TextAlign.center,
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.tertiaryColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
-                    child: TextFormField(
-                      controller: emailTextController,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        labelText: 'Email*',
-                        labelStyle: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Montserrat',
-                          color: FlutterFlowTheme.secondaryColor,
-                        ),
-                        hintText: 'example@example.com',
-                        hintStyle: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Montserrat',
-                          color: Color(0xB3FFFFFF),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: FlutterFlowTheme.tertiaryColor,
-                            width: 1,
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      child: InkWell(
+                        onTap: () async {
+                          selectedMedia = await selectMedia();
+                          setState(() {});
+                        },
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
                           ),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(100),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(100),
+                          child: Image.network(
+                            widget.user.photoUrl,
+                            fit: BoxFit.contain,
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: FlutterFlowTheme.tertiaryColor,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(100),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(100),
-                          ),
-                        ),
-                      ),
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: FlutterFlowTheme.secondaryColor,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
-                    child: TextFormField(
-                      controller: textController1,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        labelText: 'First Name*',
-                        labelStyle: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Montserrat',
-                          color: FlutterFlowTheme.secondaryColor,
-                        ),
-                        hintText: 'John',
-                        hintStyle: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Montserrat',
-                          color: Color(0xB3FFFFFF),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: FlutterFlowTheme.tertiaryColor,
-                            width: 1,
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          return null;
+                        },
+                        controller: emailTextController,
+                        obscureText: false,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          labelText: 'Email*',
+                          labelStyle: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Montserrat',
+                            color: FlutterFlowTheme.secondaryColor,
                           ),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(100),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(100),
+                          hintText: 'example@example.com',
+                          hintStyle: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Montserrat',
+                            color: Color(0xB3FFFFFF),
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: FlutterFlowTheme.tertiaryColor,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(100),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(100),
-                          ),
-                        ),
-                      ),
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: FlutterFlowTheme.secondaryColor,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 5, 0, 20),
-                    child: TextFormField(
-                      controller: textController2,
-                      obscureText: false,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        labelText: 'Last Name*',
-                        labelStyle: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Montserrat',
-                          color: FlutterFlowTheme.secondaryColor,
-                        ),
-                        hintText: 'Doe',
-                        hintStyle: FlutterFlowTheme.bodyText1.override(
-                          fontFamily: 'Montserrat',
-                          color: Color(0xB3FFFFFF),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: FlutterFlowTheme.tertiaryColor,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(100),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(100),
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: FlutterFlowTheme.tertiaryColor,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(100),
-                            bottomRight: Radius.circular(100),
-                            topLeft: Radius.circular(100),
-                            topRight: Radius.circular(100),
-                          ),
-                        ),
-                      ),
-                      style: FlutterFlowTheme.bodyText1.override(
-                        fontFamily: 'Montserrat',
-                        color: FlutterFlowTheme.secondaryColor,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: FFButtonWidget(
-                      onPressed: () async {
-                        if (emailTextController.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Email required!',
-                              ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: FlutterFlowTheme.tertiaryColor,
+                              width: 1,
                             ),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(100),
+                              bottomRight: Radius.circular(100),
+                              topLeft: Radius.circular(100),
+                              topRight: Radius.circular(100),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: FlutterFlowTheme.tertiaryColor,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(100),
+                              bottomRight: Radius.circular(100),
+                              topLeft: Radius.circular(100),
+                              topRight: Radius.circular(100),
+                            ),
+                          ),
+                        ),
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your first name';
+                          }
+                          return null;
+                        },
+                        controller: textController1,
+                        obscureText: false,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          labelText: 'First Name*',
+                          labelStyle: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Montserrat',
+                            color: FlutterFlowTheme.secondaryColor,
+                          ),
+                          hintText: 'John',
+                          hintStyle: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Montserrat',
+                            color: Color(0xB3FFFFFF),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: FlutterFlowTheme.tertiaryColor,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(100),
+                              bottomRight: Radius.circular(100),
+                              topLeft: Radius.circular(100),
+                              topRight: Radius.circular(100),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: FlutterFlowTheme.tertiaryColor,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(100),
+                              bottomRight: Radius.circular(100),
+                              topLeft: Radius.circular(100),
+                              topRight: Radius.circular(100),
+                            ),
+                          ),
+                        ),
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 5, 0, 20),
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your last name';
+                          }
+                          return null;
+                        },
+                        controller: textController2,
+                        obscureText: false,
+                        decoration: InputDecoration(
+                          isDense: true,
+                          labelText: 'Last Name*',
+                          labelStyle: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Montserrat',
+                            color: FlutterFlowTheme.secondaryColor,
+                          ),
+                          hintText: 'Doe',
+                          hintStyle: FlutterFlowTheme.bodyText1.override(
+                            fontFamily: 'Montserrat',
+                            color: Color(0xB3FFFFFF),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: FlutterFlowTheme.tertiaryColor,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(100),
+                              bottomRight: Radius.circular(100),
+                              topLeft: Radius.circular(100),
+                              topRight: Radius.circular(100),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: FlutterFlowTheme.tertiaryColor,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(100),
+                              bottomRight: Radius.circular(100),
+                              topLeft: Radius.circular(100),
+                              topRight: Radius.circular(100),
+                            ),
+                          ),
+                        ),
+                        style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Montserrat',
+                          color: FlutterFlowTheme.secondaryColor,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: FFButtonWidget(
+                        onPressed: () async {
+                          if (_formKey.currentState.validate()) {
+                          await resetPassword(
+                            email: emailTextController.text,
+                            context: context,
                           );
-                          return;
-                        }
-                        await resetPassword(
-                          email: emailTextController.text,
-                          context: context,
-                        );
-                      },
-                      text: 'Reset Password',
-                      options: FFButtonOptions(
-                        width: double.infinity,
-                        height: 50,
-                        color: FlutterFlowTheme.secondaryColor,
-                        textStyle: FlutterFlowTheme.subtitle2.override(
-                          fontFamily: 'Montserrat',
-                          color: Color(0xFF4DB6AC),
+                          }
+                        },
+                        text: 'Reset Password',
+                        options: FFButtonOptions(
+                          width: double.infinity,
+                          height: 50,
+                          color: FlutterFlowTheme.secondaryColor,
+                          textStyle: FlutterFlowTheme.subtitle2.override(
+                            fontFamily: 'Montserrat',
+                            color: Color(0xFF4DB6AC),
+                          ),
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                            width: 1,
+                          ),
+                          borderRadius: 1000,
                         ),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                          width: 1,
-                        ),
-                        borderRadius: 1000,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: FFButtonWidget(
-                      onPressed: () async {
-                        final lastName = textController2.text;
-                        final displayName = textController1.text;
-                        final email = emailTextController.text;
-                        final photoUrl = selectedMedia != null ? await uploadPhoto() : widget.user.photoUrl;
-            
-                        final usersRecordData = createUsersRecordData(
-                          lastName: lastName,
-                          displayName: displayName,
-                          email: email,
-                          photoUrl: photoUrl,
-                        );
-            
-            
-                        await currentUserReference.update(usersRecordData);
-            
-                        Navigator.pop(context);
-                      },
-                      text: 'Edit',
-                      options: FFButtonOptions(
-                        width: double.infinity,
-                        height: 50,
-                        color: FlutterFlowTheme.secondaryColor,
-                        textStyle: FlutterFlowTheme.subtitle2.override(
-                          fontFamily: 'Montserrat',
-                          color: Color(0xFF4DB6AC),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                      child: FFButtonWidget(
+                        onPressed: () async {
+                          if(_formKey.currentState.validate()){final lastName = textController2.text;
+                          final displayName = textController1.text;
+                          final email = emailTextController.text;
+                          final photoUrl = selectedMedia != null
+                              ? await uploadPhoto()
+                              : widget.user.photoUrl;
+
+                          final usersRecordData = createUsersRecordData(
+                            lastName: lastName,
+                            displayName: displayName,
+                            email: email,
+                            photoUrl: photoUrl,
+                          );
+
+                          await currentUserReference.update(usersRecordData);
+
+                          Navigator.pop(context);
+                        }},
+                        text: 'Edit',
+                        options: FFButtonOptions(
+                          width: double.infinity,
+                          height: 50,
+                          color: FlutterFlowTheme.secondaryColor,
+                          textStyle: FlutterFlowTheme.subtitle2.override(
+                            fontFamily: 'Montserrat',
+                            color: Color(0xFF4DB6AC),
+                          ),
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                            width: 1,
+                          ),
+                          borderRadius: 1000,
                         ),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                          width: 1,
-                        ),
-                        borderRadius: 1000,
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),

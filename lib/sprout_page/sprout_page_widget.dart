@@ -181,7 +181,10 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          StartupInfoTabWidget(sproutPageStartupsRecord: sproutPageStartupsRecord, pageViewController: pageViewController),
+                          StartupInfoTabWidget(
+                              sproutPageStartupsRecord:
+                                  sproutPageStartupsRecord,
+                              pageViewController: pageViewController),
                           SingleChildScrollView(
                             child: Column(
                               mainAxisSize: MainAxisSize.max,
@@ -198,22 +201,12 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                                           validateFileFormat(
                                               selectedMedia.storagePath,
                                               context)) {
-                                        showUploadMessage(
-                                            context, 'Uploading file...',
-                                            showLoading: true);
                                         final downloadUrl = await uploadData(
                                             selectedMedia.storagePath,
                                             selectedMedia.bytes);
-                                        ScaffoldMessenger.of(context)
-                                            .hideCurrentSnackBar();
                                         if (downloadUrl != null) {
                                           setState(() =>
                                               uploadedFileUrl = downloadUrl);
-                                          showUploadMessage(
-                                              context, 'Success!');
-                                        } else {
-                                          showUploadMessage(context,
-                                              'Failed to upload media');
                                         }
                                       }
                                       final videoUrl = uploadedFileUrl;
@@ -367,211 +360,9 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
                               ],
                             ),
                           ),
-                          SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                                  child: Container(
-                                    width: double.infinity,
-                                    height: 100,
-                                    decoration: BoxDecoration(),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 0, 5, 0),
-                                          child: Text(
-                                            'TRL',
-                                            style: FlutterFlowTheme.title1
-                                                .override(
-                                              fontFamily: 'Montserrat',
-                                              color: FlutterFlowTheme
-                                                  .tertiaryColor,
-                                              fontSize: 30,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          sproutPageStartupsRecord.trl
-                                              .toString(),
-                                          style:
-                                              FlutterFlowTheme.title1.override(
-                                            fontFamily: 'Montserrat',
-                                            color:
-                                                FlutterFlowTheme.tertiaryColor,
-                                            fontSize: 30,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: AutoSizeText(
-                                          'Technology readiness levels (TRLs) are a method for estimating the maturity of technologies.',
-                                          textAlign: TextAlign.center,
-                                          style: FlutterFlowTheme.bodyText1
-                                              .override(
-                                            fontFamily: 'Montserrat',
-                                            color:
-                                                FlutterFlowTheme.tertiaryColor,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                StreamBuilder<List<TrlProgressRecord>>(
-                                  stream: queryTrlProgressRecord(
-                                    queryBuilder: (trlProgressRecord) =>
-                                        trlProgressRecord.where('startup',
-                                            isEqualTo: sproutPageStartupsRecord
-                                                .reference),
-                                    singleRecord: true,
-                                  ),
-                                  builder: (context, snapshot) {
-                                    if (!snapshot.hasData) {
-                                      return Center(
-                                          child: CircularProgressIndicator());
-                                    }
-                                    List<TrlProgressRecord>
-                                        buttonTrlProgressRecordList =
-                                        snapshot.data;
-
-                                    if (snapshot.data.isEmpty) {
-                                      return Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(70, 20, 70, 0),
-                                        child: FFButtonWidget(
-                                          onPressed: () async {
-                                            final trlProgressRecordData = {
-                                              ...createTrlProgressRecordData(
-                                                dateUpdated:
-                                                    getCurrentTimestamp,
-                                                level: 0,
-                                                levelEightProgress: 0,
-                                                levelFiveProgress: 0,
-                                                levelFourProgress: 0,
-                                                levelNineProgress: 0,
-                                                levelOneProgress: 0,
-                                                levelSevenProgress: 0,
-                                                levelSixProgress: 0,
-                                                levelThreeProgress: 0,
-                                                levelTwoProgress: 0,
-                                                startup:
-                                                    sproutPageStartupsRecord
-                                                        .reference,
-                                              )
-                                            };
-
-                                            await TrlProgressRecord.collection
-                                                .doc()
-                                                .set(trlProgressRecordData);
-                                                
-                                            await Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    TRLPageWidget(
-                                                  startup:
-                                                      sproutPageStartupsRecord,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          text: 'Register TRL Progress',
-                                          options: FFButtonOptions(
-                                            width: double.infinity,
-                                            height: 40,
-                                            color:
-                                                FlutterFlowTheme.secondaryColor,
-                                            textStyle: FlutterFlowTheme
-                                                .subtitle2
-                                                .override(
-                                              fontFamily: 'Montserrat',
-                                              color:
-                                                  FlutterFlowTheme.primaryColor,
-                                            ),
-                                            borderSide: BorderSide(
-                                              color: Colors.transparent,
-                                              width: 1,
-                                            ),
-                                            borderRadius: 120,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    final buttonTrlProgressRecord =
-                                        buttonTrlProgressRecordList.first;
-                                    return Padding(
-                                      padding:
-                                          EdgeInsets.fromLTRB(70, 20, 70, 0),
-                                      child: FFButtonWidget(
-                                        onPressed: () async {
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TRLPageWidget(
-                                                startup:
-                                                    sproutPageStartupsRecord,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        text: 'Open TRL Form',
-                                        options: FFButtonOptions(
-                                          width: double.infinity,
-                                          height: 40,
-                                          color:
-                                              FlutterFlowTheme.secondaryColor,
-                                          textStyle: FlutterFlowTheme.subtitle2
-                                              .override(
-                                            fontFamily: 'Montserrat',
-                                            color:
-                                                FlutterFlowTheme.primaryColor,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color: Colors.transparent,
-                                            width: 1,
-                                          ),
-                                          borderRadius: 120,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                  child: Image.network(
-                                    'https://upload.wikimedia.org/wikipedia/commons/4/4b/NASA_TRL_Meter.png',
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Text(
-                                  'Image taken from wikepedia',
-                                  style: FlutterFlowTheme.bodyText1.override(
-                                    fontFamily: 'Montserrat',
-                                    color: FlutterFlowTheme.tertiaryColor,
-                                    fontWeight: FontWeight.w200,
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
+                          TRLTab(
+                              sproutPageStartupsRecord:
+                                  sproutPageStartupsRecord)
                         ],
                       ),
                     ),
@@ -582,6 +373,209 @@ class _SproutPageWidgetState extends State<SproutPageWidget> {
           ),
         );
       },
+    );
+  }
+}
+
+class TRLTab extends StatelessWidget {
+  const TRLTab({
+    Key key,
+    @required this.sproutPageStartupsRecord,
+  }) : super(key: key);
+
+  final StartupsRecord sproutPageStartupsRecord;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+            child: Container(
+              width: double.infinity,
+              height: 100,
+              decoration: BoxDecoration(),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                    child: Text(
+                      'TRL',
+                      style: FlutterFlowTheme.title1.override(
+                        fontFamily: 'Montserrat',
+                        color: FlutterFlowTheme.tertiaryColor,
+                        fontSize: 30,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    sproutPageStartupsRecord.trl.toString(),
+                    style: FlutterFlowTheme.title1.override(
+                      fontFamily: 'Montserrat',
+                      color: FlutterFlowTheme.tertiaryColor,
+                      fontSize: 30,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: AutoSizeText(
+                    'Technology readiness levels (TRLs) are a method for estimating the maturity of technologies.',
+                    textAlign: TextAlign.center,
+                    style: FlutterFlowTheme.bodyText1.override(
+                      fontFamily: 'Montserrat',
+                      color: FlutterFlowTheme.tertiaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          StreamBuilder<List<TrlProgressRecord>>(
+            stream: queryTrlProgressRecord(
+              queryBuilder: (trlProgressRecord) => trlProgressRecord.where(
+                  'startup',
+                  isEqualTo: sproutPageStartupsRecord.reference),
+              singleRecord: true,
+            ),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
+              List<TrlProgressRecord> buttonTrlProgressRecordList =
+                  snapshot.data;
+
+              if (snapshot.data.isEmpty) {
+                return Padding(
+                  padding: EdgeInsets.fromLTRB(70, 20, 70, 0),
+                  child: FFButtonWidget(
+                    onPressed: () async {
+                      final trlProgressRecordData = {
+                        ...createTrlProgressRecordData(
+                          dateUpdated: getCurrentTimestamp,
+                          level: 0,
+                          levelEightProgress: 0,
+                          levelFiveProgress: 0,
+                          levelFourProgress: 0,
+                          levelNineProgress: 0,
+                          levelOneProgress: 0,
+                          levelSevenProgress: 0,
+                          levelSixProgress: 0,
+                          levelThreeProgress: 0,
+                          levelTwoProgress: 0,
+                          startup: sproutPageStartupsRecord.reference,
+                        )
+                      };
+
+                      await TrlProgressRecord.collection
+                          .doc()
+                          .set(trlProgressRecordData);
+
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TRLPageWidget(
+                            startup: sproutPageStartupsRecord,
+                          ),
+                        ),
+                      );
+                    },
+                    text: 'Register TRL Progress',
+                    options: FFButtonOptions(
+                      width: double.infinity,
+                      height: 40,
+                      color: FlutterFlowTheme.secondaryColor,
+                      textStyle: FlutterFlowTheme.subtitle2.override(
+                        fontFamily: 'Montserrat',
+                        color: FlutterFlowTheme.primaryColor,
+                      ),
+                      borderSide: BorderSide(
+                        color: Colors.transparent,
+                        width: 1,
+                      ),
+                      borderRadius: 120,
+                    ),
+                  ),
+                );
+              }
+              final buttonTrlProgressRecord = buttonTrlProgressRecordList.first;
+              return Padding(
+                padding: EdgeInsets.fromLTRB(70, 20, 70, 0),
+                child: FFButtonWidget(
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TRLPageWidget(
+                          startup: sproutPageStartupsRecord,
+                        ),
+                      ),
+                    );
+                  },
+                  text: 'Open TRL Form',
+                  options: FFButtonOptions(
+                    width: double.infinity,
+                    height: 40,
+                    color: FlutterFlowTheme.secondaryColor,
+                    textStyle: FlutterFlowTheme.subtitle2.override(
+                      fontFamily: 'Montserrat',
+                      color: FlutterFlowTheme.primaryColor,
+                    ),
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                      width: 1,
+                    ),
+                    borderRadius: 120,
+                  ),
+                ),
+              );
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10.0, top: 20),
+            child: Text(
+              '(Image taken from wikepedia)',
+              style: FlutterFlowTheme.bodyText1.override(
+                fontFamily: 'Montserrat',
+                color: FlutterFlowTheme.tertiaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: Image.network(
+              'https://upload.wikimedia.org/wikipedia/commons/4/4b/NASA_TRL_Meter.png',
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: kToolbarHeight),
+            child: Text(
+              '(Image taken from wikepedia)',
+              style: FlutterFlowTheme.bodyText1.override(
+                fontFamily: 'Montserrat',
+                color: FlutterFlowTheme.tertiaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -609,8 +603,7 @@ class StartupInfoTabWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding:
-                      EdgeInsets.fromLTRB(0, 5, 0, 5),
+                  padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                   child: Container(
                     width: 120,
                     height: 120,
@@ -625,67 +618,47 @@ class StartupInfoTabWidget extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding:
-                      EdgeInsets.fromLTRB(6, 0, 0, 0),
+                  padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            0, 0, 0, 5),
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
                         child: AutoSizeText(
                           'Registered ${timeago.format(sproutPageStartupsRecord.dateRegistered.toDate())}',
-                          style: FlutterFlowTheme
-                              .bodyText1
-                              .override(
-                            fontFamily: 'Montserrat',
-                            color: Color(0x71FFFFFF),
-                            fontSize: 12
-                          ),
+                          style: FlutterFlowTheme.bodyText1.override(
+                              fontFamily: 'Montserrat',
+                              color: Color(0x71FFFFFF),
+                              fontSize: 12),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            0, 0, 0, 2),
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 2),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Text(
-                              '${NumberFormat.compact().format(
-                                  sproutPageStartupsRecord
-                                      .followerCount)} Followers',
-                              style: FlutterFlowTheme
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Montserrat',
-                                color: FlutterFlowTheme
-                                    .tertiaryColor,
-                                  fontSize: 13
-                              ),
+                              '${NumberFormat.compact().format(sproutPageStartupsRecord.followerCount)} Followers',
+                              style: FlutterFlowTheme.bodyText1.override(
+                                  fontFamily: 'Montserrat',
+                                  color: FlutterFlowTheme.tertiaryColor,
+                                  fontSize: 13),
                             ),
                           ],
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.fromLTRB(
-                            0, 0, 0, 2),
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 2),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
                             Text(
-                              '${NumberFormat.compact().format(
-                                  sproutPageStartupsRecord
-                                      .applicantCount)} Applicants',
-                              style: FlutterFlowTheme
-                                  .bodyText1
-                                  .override(
-                                fontFamily: 'Montserrat',
-                                color: FlutterFlowTheme
-                                    .tertiaryColor,
-                                  fontSize: 13
-                              ),
+                              '${NumberFormat.compact().format(sproutPageStartupsRecord.applicantCount)} Applicants',
+                              style: FlutterFlowTheme.bodyText1.override(
+                                  fontFamily: 'Montserrat',
+                                  color: FlutterFlowTheme.tertiaryColor,
+                                  fontSize: 13),
                             ),
                           ],
                         ),
@@ -694,17 +667,11 @@ class StartupInfoTabWidget extends StatelessWidget {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Text(
-                            '${NumberFormat.compact().format(
-                                sproutPageStartupsRecord
-                                    .investorCount)} Backers',
-                            style: FlutterFlowTheme
-                                .bodyText1
-                                .override(
-                              fontFamily: 'Montserrat',
-                              color: FlutterFlowTheme
-                                  .secondaryColor,
-                                  fontSize: 13
-                            ),
+                            '${NumberFormat.compact().format(sproutPageStartupsRecord.investorCount)} Backers',
+                            style: FlutterFlowTheme.bodyText1.override(
+                                fontFamily: 'Montserrat',
+                                color: FlutterFlowTheme.secondaryColor,
+                                fontSize: 13),
                           ),
                         ],
                       ),
@@ -714,125 +681,107 @@ class StartupInfoTabWidget extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(top: 5.0),
                             child: Text(
-                              'Looking For: ${
-                                  sproutPageStartupsRecord
-                                      .lookingFor}',
-                              style: FlutterFlowTheme
-                                  .bodyText1
-                                  .override(
+                              'Looking For: ${sproutPageStartupsRecord.lookingFor}',
+                              style: FlutterFlowTheme.bodyText1.override(
                                 fontFamily: 'Montserrat',
-                                color: FlutterFlowTheme
-                                    .secondaryColor,
+                                color: FlutterFlowTheme.secondaryColor,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      
                     ],
                   ),
                 )
               ],
             ),
           ),
-          sproutPageStartupsRecord.images.isEmpty ? Container() : Container(
-            width: double.infinity,
-            height:
-                MediaQuery.of(context).size.height * 0.4,
-            decoration: BoxDecoration(
-              color: Color(0xFFEEEEEE),
-            ),
-            child: Builder(
-              builder: (context) {
-                final images = sproutPageStartupsRecord
-                        .images
-                        ?.toList() ??
-                    [];
-                return Container(
-                  width: double.infinity,
-                  height: 500,
-                  child: Stack(
-                    children: [
-                      PageView.builder(
-                        controller: pageViewController,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: images.length,
-                        itemBuilder:
-                            (context, imagesIndex) {
-                          final imagesItem =
-                              images[imagesIndex];
-                          return Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: FlutterFlowTheme
-                                  .primaryColor,
-                            ),
-                            child: Padding(
-                              padding:
-                                  EdgeInsets.fromLTRB(
-                                      0, 1, 0, 0),
-                              child: Image.network(
-                                imagesItem,
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.contain,
+          sproutPageStartupsRecord.images.isEmpty
+              ? Container()
+              : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFEEEEEE),
+                    ),
+                    child: Builder(
+                      builder: (context) {
+                        final images =
+                            sproutPageStartupsRecord.images?.toList() ?? [];
+                        return Container(
+                          width: double.infinity,
+                          height: 500,
+                          child: Stack(
+                            children: [
+                              PageView.builder(
+                                controller: pageViewController,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: images.length,
+                                itemBuilder: (context, imagesIndex) {
+                                  final imagesItem = images[imagesIndex];
+                                  return Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.primaryColor,
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                                      child: Image.network(
+                                        imagesItem,
+                                        width: 100,
+                                        height: 100,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                      Align(
-                        alignment: Alignment(0, 1),
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              0, 0, 0, 10),
-                          child: SmoothPageIndicator(
-                            controller:
-                                pageViewController,
-                            count: images.length,
-                            axisDirection:
-                                Axis.horizontal,
-                            onDotClicked: (i) {
-                              pageViewController
-                                  .animateToPage(
-                                i,
-                                duration: Duration(
-                                    milliseconds: 500),
-                                curve: Curves.ease,
-                              );
-                            },
-                            effect: ExpandingDotsEffect(
-                              expansionFactor: 2,
-                              spacing: 8,
-                              radius: 16,
-                              dotWidth: 16,
-                              dotHeight: 16,
-                              dotColor: Colors.black.withOpacity(0.2),
-                              activeDotColor: Colors.black.withOpacity(0.7),
-                              paintStyle:
-                                  PaintingStyle.fill,
-                            ),
+                              Align(
+                                alignment: Alignment(0, 1),
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                                  child: SmoothPageIndicator(
+                                    controller: pageViewController,
+                                    count: images.length,
+                                    axisDirection: Axis.horizontal,
+                                    onDotClicked: (i) {
+                                      pageViewController.animateToPage(
+                                        i,
+                                        duration: Duration(milliseconds: 500),
+                                        curve: Curves.ease,
+                                      );
+                                    },
+                                    effect: ExpandingDotsEffect(
+                                      expansionFactor: 2,
+                                      spacing: 8,
+                                      radius: 16,
+                                      dotWidth: 16,
+                                      dotHeight: 16,
+                                      dotColor: Colors.black.withOpacity(0.2),
+                                      activeDotColor:
+                                          Colors.black.withOpacity(0.7),
+                                      paintStyle: PaintingStyle.fill,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                    ],
+                        );
+                      },
+                    ),
                   ),
-                );
-              },
-            ),
-          ),
+                ),
           Padding(
-                padding: EdgeInsets.fromLTRB(
-                    20, 20, 0, 0),
+            padding: EdgeInsets.fromLTRB(20, 20, 0, 0),
             child: Text(
               sproutPageStartupsRecord.motto,
-              style: FlutterFlowTheme
-                  .bodyText1
-                  .override(
+              style: FlutterFlowTheme.bodyText1.override(
                 fontFamily: 'Montserrat',
-                color: FlutterFlowTheme
-                    .tertiaryColor,
+                color: FlutterFlowTheme.tertiaryColor,
               ),
             ),
           ),
@@ -853,17 +802,36 @@ class StartupInfoTabWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 FFButtonWidget(
-                  onPressed: () async {
-                    await sproutPageStartupsRecord
-                        .reference
-                        .delete();
-                    await Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NavBarPage(
-                            initialPage: 'HomePage'),
-                      ),
-                      (r) => false,
+                  onPressed: () {
+                    Widget cancelButton = FlatButton(
+                      child: Text("Cancel"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    );
+                    Widget continueButton = FlatButton(
+                      child: Text("Continue"),
+                      onPressed: () async {
+                        await sproutPageStartupsRecord.reference.delete();
+                        Navigator.of(context).pop();
+                      },
+                    );
+
+                    AlertDialog alert = AlertDialog(
+                      title: Text("Delete Sprout?"),
+                      content:
+                          Text("Are you sure you want to delete this Sprout?"),
+                      actions: [
+                        cancelButton,
+                        continueButton,
+                      ],
+                    );
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return alert;
+                      },
                     );
                   },
                   text: 'Delete Sprout',
@@ -872,8 +840,7 @@ class StartupInfoTabWidget extends StatelessWidget {
                     width: 130,
                     height: 40,
                     color: Colors.transparent,
-                    textStyle: FlutterFlowTheme.subtitle2
-                        .override(
+                    textStyle: FlutterFlowTheme.subtitle2.override(
                       fontFamily: 'Montserrat',
                       color: Colors.white,
                     ),

@@ -257,7 +257,37 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
                       child: widget.post.user == currentUserReference
                           ? IconButton(
                               onPressed: () async {
-                                await widget.post.reference.delete();
+                                Widget cancelButton = FlatButton(
+                                  child: Text("Cancel"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+                                Widget continueButton = FlatButton(
+                                  child: Text("Continue"),
+                                  onPressed: () async {
+                                    await widget.post.reference.delete();
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+
+                                AlertDialog alert = AlertDialog(
+                                  title: Text("Delete Post?"),
+                                  content: Text(
+                                      "Are you sure you want to delete this Post?"),
+                                  actions: [
+                                    cancelButton,
+                                    continueButton,
+                                  ],
+                                );
+
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return alert;
+                                  },
+                                );
                               },
                               icon: Icon(
                                 Icons.delete_forever,
@@ -308,7 +338,7 @@ class _PostInfoPageWidgetState extends State<PostInfoPageWidget> {
                                     },
                               icon: Icon(
                                 !widget.post.likedUsers
-                                            .contains(currentUserReference)
+                                        .contains(currentUserReference)
                                     ? Icons.thumb_up_off_alt
                                     : Icons.thumb_up,
                                 color: FlutterFlowTheme.tertiaryColor,
